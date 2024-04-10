@@ -1,4 +1,4 @@
-import { Token, TokenTypes, tokenize } from "./tokenizer2";
+import { Token, TokenTypes, tokenize } from "./tokenizer";
 
 let lookahead: Token;
 let tokenIndex = 0;
