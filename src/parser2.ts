@@ -2,7 +2,18 @@ import { Token, TokenTypes, Tokenizer } from "./tokenizer";
 
 export function parse(input: string) {
   let lookahead: Token | null;
-  let tokenizer: Tokenizer;
+  let tokenIndex = 0;
+  //   let tokenizer: Tokenizer;
+
+  const tokenizer2 = new Tokenizer(input);
+  const tokens: Array<Token> = [];
+  let t = tokenizer2.getNextToken();
+  while (t) {
+    tokens.push(t);
+    t = tokenizer2.getNextToken();
+  }
+
+  console.log("tokens", tokens);
 
   function eat(tokenType) {
     const token = lookahead;
@@ -17,7 +28,7 @@ export function parse(input: string) {
       );
     }
 
-    lookahead = tokenizer.getNextToken();
+    lookahead = tokens[tokenIndex++];
 
     return token;
   }
@@ -113,8 +124,11 @@ export function parse(input: string) {
     };
   }
 
-  tokenizer = new Tokenizer(input);
-  lookahead = tokenizer.getNextToken();
+  //   tokenizer = new Tokenizer(input);
+  //   lookahead = tokenizer.getNextToken();
+
+  //   tokenizer = new Tokenizer(input);
+  lookahead = tokens[tokenIndex++];
 
   return Expression();
 }
