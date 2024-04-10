@@ -14,7 +14,6 @@ export function parse(input: string) {
 }
 
 function eat(tokenType, tokens) {
-  console.log("tokens", tokens);
   const token = lookahead;
 
   if (token == null) {
