@@ -1,6 +1,10 @@
-import { TokenTypes, Tokenizer } from "./tokenizer";
+import { Token, TokenTypes, Tokenizer } from "./tokenizer";
 
 export class Parser {
+  input: string;
+  tokenizer: Tokenizer;
+  lookahead: Token | null;
+
   parse(input) {
     this.input = input;
     this.tokenizer = new Tokenizer(input);
@@ -27,7 +31,7 @@ export class Parser {
     return token;
   }
 
-  BinaryExpression(leftRule, rightRule, operatorType1, operatorType2) {
+  BinaryExpression(leftRule, rightRule, operatorType1, operatorType2?) {
     let left = leftRule();
 
     while (
@@ -93,15 +97,15 @@ export class Parser {
    *    / NUMBER
    */
   Primary() {
-    if (this.lookahead.type === TokenTypes.PARENTHESIS_LEFT) {
+    if (this.lookahead?.type === TokenTypes.PARENTHESIS_LEFT) {
       return this.ParenthesizedExpression();
     }
 
-    if (this.lookahead.type === TokenTypes.SUBTRACTION) {
+    if (this.lookahead?.type === TokenTypes.SUBTRACTION) {
       return this.UnaryExpression();
     }
 
-    if (this.lookahead.type === TokenTypes.IDENTIFIER) {
+    if (this.lookahead?.type === TokenTypes.IDENTIFIER) {
       return this.FunctionExpression();
     }
 

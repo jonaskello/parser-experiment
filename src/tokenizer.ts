@@ -24,6 +24,9 @@ const TokenSpec = [
 ];
 
 export class Tokenizer {
+  input: string;
+  cursor: number;
+
   constructor(input) {
     this.input = input;
     this.cursor = 0;
@@ -43,7 +46,7 @@ export class Tokenizer {
     return matched[0];
   }
 
-  getNextToken() {
+  getNextToken(): Token | null {
     if (!this.hasMoreTokens()) {
       return null;
     }
@@ -70,3 +73,8 @@ export class Tokenizer {
     throw new SyntaxError(`Unexpected token: "${inputSlice[0]}"`);
   }
 }
+
+export type Token = {
+  type;
+  value: string;
+};
