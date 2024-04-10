@@ -1,15 +1,15 @@
-import { Token, TokenTypes, Tokenizer } from "./tokenizer";
+import { Token, TokenTypes, tokenize } from "./tokenizer2";
 
 let lookahead: Token;
 let tokenIndex = 0;
 
 export function parse(input: string) {
   const tokens: Array<Token> = [];
-  const tokenizer = new Tokenizer(input);
-  let t = tokenizer.getNextToken();
+  const getNextToken = tokenize(input);
+  let t = getNextToken();
   while (t) {
     tokens.push(t);
-    t = tokenizer.getNextToken();
+    t = getNextToken();
   }
 
   console.log("tokens", tokens);
