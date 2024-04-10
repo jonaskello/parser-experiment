@@ -2,7 +2,6 @@ import { Token, TokenTypes, Tokenizer } from "./tokenizer";
 
 let lookahead: Token;
 let tokenIndex = 0;
-// const tokens: Array<Token> = [];
 
 export function parse(input: string) {
   const tokens: Array<Token> = [];
