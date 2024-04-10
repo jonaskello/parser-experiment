@@ -1,9 +1,8 @@
-import { TokenTypes, Tokenizer } from "./tokenizer";
+import { Token, TokenTypes, Tokenizer } from "./tokenizer";
 
-function Parser() {
-  let input;
-  let tokenizer;
-  let lookahead;
+export function parse(input: string) {
+  let lookahead: Token | null;
+  let tokenizer: Tokenizer;
 
   function eat(tokenType) {
     const token = lookahead;
@@ -70,15 +69,15 @@ function Parser() {
   }
 
   function Primary() {
-    if (lookahead.type === TokenTypes.PARENTHESIS_LEFT) {
+    if (lookahead?.type === TokenTypes.PARENTHESIS_LEFT) {
       return ParenthesizedExpression();
     }
 
-    if (lookahead.type === TokenTypes.SUBTRACTION) {
+    if (lookahead?.type === TokenTypes.SUBTRACTION) {
       return UnaryExpression();
     }
 
-    if (lookahead.type === TokenTypes.IDENTIFIER) {
+    if (lookahead?.type === TokenTypes.IDENTIFIER) {
       return FunctionExpression();
     }
 
@@ -114,15 +113,8 @@ function Parser() {
     };
   }
 
-  return {
-    parse(inputString) {
-      input = inputString;
-      tokenizer = new Tokenizer(input);
-      lookahead = tokenizer.getNextToken();
+  tokenizer = new Tokenizer(input);
+  lookahead = tokenizer.getNextToken();
 
-      return Expression();
-    },
-  };
+  return Expression();
 }
-
-export default Parser;
