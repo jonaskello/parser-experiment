@@ -5,11 +5,11 @@ let tokenIndex = 0;
 const tokens: Array<Token> = [];
 
 export function parse(input: string) {
-  const tokenizer2 = new Tokenizer(input);
-  let t = tokenizer2.getNextToken();
+  const tokenizer = new Tokenizer(input);
+  let t = tokenizer.getNextToken();
   while (t) {
     tokens.push(t);
-    t = tokenizer2.getNextToken();
+    t = tokenizer.getNextToken();
   }
 
   console.log("tokens", tokens);
