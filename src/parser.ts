@@ -1,10 +1,10 @@
-import { Token, TokenTypes, tokenize, tokenize2 } from "./tokenizer";
+import { Token, TokenTypes, tokenize } from "./tokenizer";
 
 let lookahead: Token;
 let tokenIndex = 0;
 
 export function parse(input: string) {
-  const tokens = tokenize2(input);
+  const tokens = tokenize(input);
 
   console.log("tokens", tokens);
 

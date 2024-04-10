@@ -21,7 +21,7 @@ const isLetter = (char: string) => {
   return (code >= 65 && code <= 90) || (code >= 97 && code <= 122);
 };
 
-export function tokenize2(input: string): ReadonlyArray<Token> {
+export function tokenize(input: string): ReadonlyArray<Token> {
   let cursor = 0;
   const tokens: Array<Token> = [];
   while (cursor < input.length) {
