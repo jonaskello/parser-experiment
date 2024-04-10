@@ -16,7 +16,10 @@ export const TokenTypes = {
 };
 
 const isNumeric = (char: string) => !isNaN(parseInt(char));
-const isLetter = (char: string) => /[a-z]/i.test(char);
+const isLetter = (char: string) => {
+  const code = char.charCodeAt(0);
+  return (code >= 65 && code <= 90) || (code >= 97 && code <= 122);
+};
 
 export function tokenize2(input: string): ReadonlyArray<Token> {
   let cursor = 0;
