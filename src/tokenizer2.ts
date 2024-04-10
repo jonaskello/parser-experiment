@@ -28,8 +28,16 @@ const TokenSpec: ReadonlyArray<[RegExp, string | null]> = [
   [/^\)/, TokenTypes.PARENTHESIS_RIGHT],
 ];
 
-export function tokenize(input) {
+export function tokenize(input): ReadonlyArray<Token> {
   let cursor = 0;
+
+  const tokens: Array<Token> = [];
+  let t = getNextToken();
+  while (t) {
+    tokens.push(t);
+    t = getNextToken();
+  }
+  return tokens;
 
   function hasMoreTokens() {
     return cursor < input.length;
@@ -71,6 +79,4 @@ export function tokenize(input) {
 
     throw new SyntaxError(`Unexpected token: "${inputSlice[0]}"`);
   }
-
-  return getNextToken;
 }

@@ -4,13 +4,7 @@ let lookahead: Token;
 let tokenIndex = 0;
 
 export function parse(input: string) {
-  const tokens: Array<Token> = [];
-  const getNextToken = tokenize(input);
-  let t = getNextToken();
-  while (t) {
-    tokens.push(t);
-    t = getNextToken();
-  }
+  const tokens = tokenize(input);
 
   console.log("tokens", tokens);
 
