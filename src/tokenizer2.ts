@@ -39,10 +39,6 @@ export function tokenize(input): ReadonlyArray<Token> {
   }
   return tokens;
 
-  function hasMoreTokens() {
-    return cursor < input.length;
-  }
-
   function match(regex, inputSlice) {
     const matched = regex.exec(inputSlice);
     if (matched === null) {
@@ -54,7 +50,7 @@ export function tokenize(input): ReadonlyArray<Token> {
   }
 
   function getNextToken(): Token | null {
-    if (!hasMoreTokens()) {
+    if (!(cursor < input.length)) {
       return null;
     }
 
