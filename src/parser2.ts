@@ -2,9 +2,10 @@ import { Token, TokenTypes, Tokenizer } from "./tokenizer";
 
 let lookahead: Token;
 let tokenIndex = 0;
-const tokens: Array<Token> = [];
+// const tokens: Array<Token> = [];
 
 export function parse(input: string) {
+  const tokens: Array<Token> = [];
   const tokenizer = new Tokenizer(input);
   let t = tokenizer.getNextToken();
   while (t) {
@@ -16,10 +17,11 @@ export function parse(input: string) {
 
   lookahead = tokens[tokenIndex++];
 
-  return Expression();
+  return Expression(tokens);
 }
 
 function eat(tokenType, tokens) {
+  console.log("tokens", tokens);
   const token = lookahead;
 
   if (token == null) {
@@ -37,8 +39,14 @@ function eat(tokenType, tokens) {
   return token;
 }
 
-function BinaryExpression(leftRule, rightRule, operatorType1, operatorType2?) {
-  let left = leftRule();
+function BinaryExpression(
+  tokens: ReadonlyArray<Token>,
+  leftRule,
+  rightRule,
+  operatorType1,
+  operatorType2?
+) {
+  let left = leftRule(tokens);
 
   while (
     lookahead &&
@@ -49,15 +57,16 @@ function BinaryExpression(leftRule, rightRule, operatorType1, operatorType2?) {
       type: "BinaryExpression",
       operator,
       left,
-      right: rightRule(),
+      right: rightRule(tokens),
     };
   }
 
   return left;
 }
 
-function Expression() {
+function Expression(tokens: ReadonlyArray<Token>) {
   return BinaryExpression(
+    tokens,
     Term,
     Term,
     TokenTypes.ADDITION,
@@ -65,8 +74,9 @@ function Expression() {
   );
 }
 
-function Term() {
+function Term(tokens: ReadonlyArray<Token>) {
   return BinaryExpression(
+    tokens,
     Factor,
     Factor,
     TokenTypes.MULTIPLICATION,
@@ -74,21 +84,21 @@ function Term() {
   );
 }
 
-function Factor() {
-  return BinaryExpression(Primary, Factor, TokenTypes.EXPONENTIATION);
+function Factor(tokens: ReadonlyArray<Token>) {
+  return BinaryExpression(tokens, Primary, Factor, TokenTypes.EXPONENTIATION);
 }
 
-function Primary() {
+function Primary(tokens: ReadonlyArray<Token>) {
   if (lookahead?.type === TokenTypes.PARENTHESIS_LEFT) {
-    return ParenthesizedExpression();
+    return ParenthesizedExpression(tokens);
   }
 
   if (lookahead?.type === TokenTypes.SUBTRACTION) {
-    return UnaryExpression();
+    return UnaryExpression(tokens);
   }
 
   if (lookahead?.type === TokenTypes.IDENTIFIER) {
-    return FunctionExpression();
+    return FunctionExpression(tokens);
   }
 
   const token = eat(TokenTypes.NUMBER, tokens);
@@ -98,27 +108,27 @@ function Primary() {
   };
 }
 
-function ParenthesizedExpression() {
+function ParenthesizedExpression(tokens: ReadonlyArray<Token>) {
   eat(TokenTypes.PARENTHESIS_LEFT, tokens);
-  const expression = Expression();
+  const expression = Expression(tokens);
   eat(TokenTypes.PARENTHESIS_RIGHT, tokens);
 
   return expression;
 }
 
-function UnaryExpression() {
+function UnaryExpression(tokens: ReadonlyArray<Token>) {
   eat(TokenTypes.SUBTRACTION, tokens);
   return {
     type: "UnaryExpression",
-    value: Factor(),
+    value: Factor(tokens),
   };
 }
 
-function FunctionExpression() {
+function FunctionExpression(tokens: ReadonlyArray<Token>) {
   const token = eat(TokenTypes.IDENTIFIER, tokens);
   return {
     type: "Function",
     name: token.value,
-    value: ParenthesizedExpression(),
+    value: ParenthesizedExpression(tokens),
   };
 }
