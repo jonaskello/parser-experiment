@@ -15,7 +15,7 @@ export const TokenTypes = {
   PARENTHESIS_RIGHT: ")",
 };
 
-const TokenSpec = [
+const TokenSpec: ReadonlyArray<[RegExp, string | null]> = [
   [/^\s+/, null],
   [/^(?:\d+(?:\.\d*)?|\.\d+)/, TokenTypes.NUMBER],
   [/^[a-z]+/, TokenTypes.IDENTIFIER],
@@ -45,7 +45,7 @@ export function tokenize(input) {
     return matched[0];
   }
 
-  function getNextToken() {
+  function getNextToken(): Token | null {
     if (!hasMoreTokens()) {
       return null;
     }
