@@ -12,8 +12,8 @@ export type AstNode =
   | ValueExpr
   | ValueRangeExpr;
 
-// // All expression
-// export type Expr = BooleanExpr | PropertyValueExpr | ValueRangeExpr;
+// All expression
+export type Expr = BooleanExpr | PropertyValueExpr | ValueRangeExpr;
 
 // Expressions that result in a boolean
 export type BooleanExpr = OrExpr | AndExpr | EqualsExpr | ComparisonExpr | EmptyExpr;
