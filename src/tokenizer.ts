@@ -56,6 +56,8 @@ const isLetter = (c: string) => {
   const code = c.charCodeAt(0);
   return (code >= 65 && code <= 90) || (code >= 97 && code <= 122);
 };
+// letter / "." / "_"
+const isIdentLetter = (c: string) => isLetter(c) || c === "." || c === "_";
 const isWhitespace = (c: string) => c === " ";
 
 export type TokenizeState = {
@@ -81,9 +83,9 @@ export function getNextToken(input: string, state: TokenizeState): Token | null 
       number += input[state.cursor++];
     }
     return { type: TokenTypes.NUMBER, value: number };
-  } else if (isLetter(input[state.cursor])) {
+  } else if (isIdentLetter(input[state.cursor])) {
     let identifier = input[state.cursor++];
-    while (state.cursor < input.length && isLetter(input[state.cursor])) {
+    while (state.cursor < input.length && isIdentLetter(input[state.cursor])) {
       identifier += input[state.cursor++];
     }
     return { type: TokenTypes.IDENTIFIER, value: identifier };
