@@ -41,7 +41,7 @@ function expr(state: ParseState) {
 
 function comparisonExpr(state: ParseState): AstNode {
   // ComparisonExpr = ( AddExpr ( (_ (">=" / "<=" / ">" / "<") _ AddExpr) / (_ ("=" / "!=") _ ValueRangeExpr ("," ValueRangeExpr)*) ) )
-  return binaryExpression(state, addExpr, valueRangeExpr, TokenTypes.EQUALS);
+  return binaryExpression(state, addExpr, valueRangeExpr, TokenTypes.EQUALS, TokenTypes.GREATER);
 }
 
 function valueRangeExpr(state: ParseState): AstNode {
