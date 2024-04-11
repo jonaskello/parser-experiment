@@ -7,7 +7,7 @@ main();
 
 function main() {
   const input = "size=1+2 & a!=3,1 | foo>55";
-  // const input = "size=1,2";
+  //const input = "size=1~2";
 
   printAllTokens(input);
 

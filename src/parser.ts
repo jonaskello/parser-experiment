@@ -70,7 +70,11 @@ function comparisonExpr(state: ParseState): AstNode {
 
 function valueRangeExpr(state: ParseState): AstNode {
   // ValueRangeExpr = AddExpr (_ "~" _ AddExpr)?
-  return addExpr(state);
+  const left = addExpr(state);
+  // if (state.lookahead?.type === TokenTypes.) {
+  //   return left;
+  // }
+  return left;
 }
 
 function addExpr(state: ParseState): AstNode {

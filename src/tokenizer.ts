@@ -19,6 +19,7 @@ export const TokenTypes = {
   PARENTHESIS_LEFT: "(",
   PARENTHESIS_RIGHT: ")",
   COMMA: ",",
+  TILDE: "~",
   NUMBER: "NUMBER",
   IDENTIFIER: "IDENTIFIER",
 };
@@ -103,6 +104,8 @@ export function getNextToken(input: string, state: TokenizeState): Token | null 
         return { type: TokenTypes.PARENTHESIS_RIGHT, value: c };
       case ",":
         return { type: TokenTypes.COMMA, value: c };
+      case "~":
+        return { type: TokenTypes.TILDE, value: c };
       default:
         throw new SyntaxError(`Unexpected token: "${c}"`);
     }
