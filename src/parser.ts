@@ -12,7 +12,7 @@ export function parse(input: string): AstNode {
 }
 
 function orExpr(state: ParseState): AstNode {
-  // OrExpr = AndExpr (_ "|" _ i:AndExpr)*
+  // OrExpr = AndExpr (_ "|" _ AndExpr)*
   let left = andExpr(state);
   while (state.lookahead !== null && state.lookahead.type === TokenTypes.OR) {
     eat(state.lookahead.type, state).value as MathOperator | ComparisionOperator;
