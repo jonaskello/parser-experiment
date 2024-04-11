@@ -27,20 +27,16 @@ export function parse(input: string) {
   return Expression(state);
 }
 
-function eat(tokenType: string, state: ParseState) {
-  const token = state.lookahead;
+function Expression(state: ParseState) {
+  return BinaryExpression(state, Term, Term, TokenTypes.ADDITION, TokenTypes.SUBTRACTION);
+}
 
-  if (token == null) {
-    throw new SyntaxError(`Unexpected end of input, expected "${tokenType}"`);
-  }
+function Term(state: ParseState) {
+  return BinaryExpression(state, Factor, Factor, TokenTypes.MULTIPLICATION, TokenTypes.DIVISION);
+}
 
-  if (token.type !== tokenType) {
-    throw new SyntaxError(`Unexpected token: "${token.value}", expected "${tokenType}"`);
-  }
-
-  state.lookahead = getNextToken(state.input, state.tokenizeState);
-
-  return token;
+function Factor(state: ParseState) {
+  return BinaryExpression(state, Primary, Factor, TokenTypes.EXPONENTIATION);
 }
 
 function BinaryExpression(state: ParseState, leftRule, rightRule, operatorType1, operatorType2?) {
@@ -57,18 +53,6 @@ function BinaryExpression(state: ParseState, leftRule, rightRule, operatorType1,
   }
 
   return left;
-}
-
-function Expression(state: ParseState) {
-  return BinaryExpression(state, Term, Term, TokenTypes.ADDITION, TokenTypes.SUBTRACTION);
-}
-
-function Term(state: ParseState) {
-  return BinaryExpression(state, Factor, Factor, TokenTypes.MULTIPLICATION, TokenTypes.DIVISION);
-}
-
-function Factor(state: ParseState) {
-  return BinaryExpression(state, Primary, Factor, TokenTypes.EXPONENTIATION);
 }
 
 function Primary(state: ParseState) {
@@ -116,4 +100,20 @@ function IdentifierExpression(state: ParseState) {
     name: token.value,
     value: token.value,
   };
+}
+
+function eat(tokenType: string, state: ParseState) {
+  const token = state.lookahead;
+
+  if (token == null) {
+    throw new SyntaxError(`Unexpected end of input, expected "${tokenType}"`);
+  }
+
+  if (token.type !== tokenType) {
+    throw new SyntaxError(`Unexpected token: "${token.value}", expected "${tokenType}"`);
+  }
+
+  state.lookahead = getNextToken(state.input, state.tokenizeState);
+
+  return token;
 }
