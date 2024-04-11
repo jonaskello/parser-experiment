@@ -15,9 +15,9 @@ export type EqualsExpr = Readonly<{
   rightValueRanges: ReadonlyArray<ValueRangeExpr>;
 }>;
 export type EqualsOperationType = "equals" | "notEquals";
-export type AddExpr = Readonly<{ type: "AddExpr"; left: Expr; operationType: AddExprOperationType; right: Expr }>;
+export type AddExpr = Readonly<{ type: "AddExpr"; left: PropertyValueExpr; operationType: AddExprOperationType; right: PropertyValueExpr }>;
 export type AddExprOperationType = "add" | "subtract";
-export type MulExpr = Readonly<{ type: "MulExpr"; left: Expr; operationType: MulExprOperationType; right: Expr }>;
+export type MulExpr = Readonly<{ type: "MulExpr"; left: PropertyValueExpr; operationType: MulExprOperationType; right: PropertyValueExpr }>;
 export type MulExprOperationType = "multiply" | "divide";
 export type OrExpr = Readonly<{ type: "OrExpr"; children: ReadonlyArray<BooleanExpr> }>;
 export type AndExpr = Readonly<{ type: "AndExpr"; children: ReadonlyArray<BooleanExpr> }>;
