@@ -16,7 +16,12 @@ export type MulExpr = Readonly<{ type: "MulExpr"; left: Expr; operationType: Mul
 export type MulExprOperationType = "multiply" | "divide";
 export type OrExpr = Readonly<{ type: "OrExpr"; children: ReadonlyArray<BooleanExpr> }>;
 export type AndExpr = Readonly<{ type: "AndExpr"; children: ReadonlyArray<BooleanExpr> }>;
-export type ComparisonExpr = Readonly<{ type: "ComparisonExpr"; leftValue: Expr; operationType: ComparisonOperationType; rightValue: Expr }>;
+export type ComparisonExpr = Readonly<{
+  type: "ComparisonExpr";
+  leftValue: PropertyValueExpr;
+  operationType: ComparisonOperationType;
+  rightValue: PropertyValueExpr;
+}>;
 export type ComparisonOperationType = "greater" | "less" | "greaterOrEqual" | "lessOrEqual";
 export type ValueRangeExpr = Readonly<{ type: "ValueRangeExpr"; min: PropertyValueExpr; max: PropertyValueExpr }>;
 export type UnaryExpr = Readonly<{ type: "UnaryExpr"; operationType: UnaryExprOperationType; value: PropertyValueExpr }>;
