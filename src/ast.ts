@@ -5,6 +5,7 @@ export type AstNode =
   | MulExpr
   | ComparisonExpr
   | EqualsExpr
+  | EmptyExpr
   | UnaryExpr
   | IdentifierExpr
   | Numeric

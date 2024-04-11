@@ -8,6 +8,10 @@ export function parse(input: string): AstNode {
 
   state.lookahead = getNextToken(input, state.tokenizeState);
 
+  if (state.lookahead === null) {
+    return { type: "EmptyExpr" };
+  }
+
   return orExpr(state);
 }
 
