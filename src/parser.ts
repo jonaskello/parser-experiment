@@ -4,13 +4,13 @@ type ParseState = { input: string; lookahead: Token | null; tokenizeState: Token
 
 type RuleFn = (state: ParseState) => AstNode;
 
-type AstNode = BinaryExpression | UnaryExpression | Identifier | Number | ValueRanges | ValueRangeExpr;
+type AstNode = BinaryExpression | UnaryExpression | Identifier | Numeric | ValueRanges | ValueRangeExpr;
 type BinaryExpression = { type: "BinaryExpression"; operator: string; left: AstNode; right: AstNode };
 type ValueRanges = { type: "ValueRanges"; ranges: Array<AstNode> };
 type ValueRangeExpr = { type: "ValueRangeExpr"; min: AstNode; max: AstNode };
-type UnaryExpression = { type: "UnaryExpression"; value: Identifier | Number };
+type UnaryExpression = { type: "UnaryExpression"; value: Identifier | Numeric };
 type Identifier = { type: "Identifier"; name: string; value: string };
-type Number = { type: "Number"; value: number };
+type Numeric = { type: "Numeric"; value: number };
 
 export function parse(input: string): AstNode {
   const state: ParseState = { tokenizeState: { cursor: 0 }, input, lookahead: null };
@@ -90,7 +90,7 @@ function multiplyExpr(state: ParseState): AstNode {
   return binaryExpression(state, unaryExpr, multiplyExpr, TokenTypes.MULTIPLICATION, TokenTypes.DIVISION);
 }
 
-function unaryExpr(state: ParseState): UnaryExpression | Identifier | Number {
+function unaryExpr(state: ParseState): UnaryExpression | Identifier | Numeric {
   // UnaryExpr  = ( ("-" ValueExpr) ) / ValueExpr;
   if (state.lookahead?.type === TokenTypes.SUBTRACTION) {
     eat(TokenTypes.SUBTRACTION, state);
@@ -99,7 +99,7 @@ function unaryExpr(state: ParseState): UnaryExpression | Identifier | Number {
   return valueExpr(state);
 }
 
-function valueExpr(state: ParseState): Identifier | Number {
+function valueExpr(state: ParseState): Identifier | Numeric {
   // ValueExpr  = "null" / ident (":" ident)? / propval
   if (state.lookahead?.type === TokenTypes.IDENTIFIER) {
     const token = eat(TokenTypes.IDENTIFIER, state);
@@ -107,7 +107,7 @@ function valueExpr(state: ParseState): Identifier | Number {
   }
 
   const token = eat(TokenTypes.NUMBER, state);
-  return { type: "Number", value: Number(token.value) };
+  return { type: "Numeric", value: Number(token.value) };
 }
 
 function binaryExpression(state: ParseState, leftRule: RuleFn, rightRule: RuleFn, operatorType1: string, operatorType2?: string): AstNode {
