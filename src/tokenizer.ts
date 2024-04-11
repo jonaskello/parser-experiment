@@ -20,76 +20,7 @@ const isLetter = (c: string) => {
   const code = c.charCodeAt(0);
   return (code >= 65 && code <= 90) || (code >= 97 && code <= 122);
 };
-
 const isWhitespace = (c: string) => c === " ";
-
-export function tokenize(input: string): ReadonlyArray<Token> {
-  let cursor = 0;
-  const tokens: Array<Token> = [];
-  while (cursor < input.length) {
-    if (isNumeric(input[cursor])) {
-      let number = input[cursor++];
-      while (cursor < input.length && isNumeric(input[cursor])) {
-        number += input[cursor++];
-      }
-      tokens.push({ type: TokenTypes.NUMBER, value: number });
-    } else if (isLetter(input[cursor])) {
-      let identifier = input[cursor++];
-      while (cursor < input.length && isNumeric(input[cursor])) {
-        identifier += input[cursor++];
-      }
-      tokens.push({ type: TokenTypes.IDENTIFIER, value: identifier });
-    } else {
-      switch (input[cursor]) {
-        case "+":
-          tokens.push({ type: TokenTypes.ADDITION, value: input[cursor] });
-          cursor++;
-          break;
-        case "-":
-          tokens.push({ type: TokenTypes.SUBTRACTION, value: input[cursor] });
-          cursor++;
-          break;
-        case "*":
-          tokens.push({
-            type: TokenTypes.MULTIPLICATION,
-            value: input[cursor],
-          });
-          cursor++;
-          break;
-        case "/":
-          tokens.push({ type: TokenTypes.DIVISION, value: input[cursor] });
-          cursor++;
-          break;
-        case "^":
-          tokens.push({
-            type: TokenTypes.EXPONENTIATION,
-            value: input[cursor],
-          });
-          cursor++;
-          break;
-        case "(":
-          tokens.push({
-            type: TokenTypes.PARENTHESIS_LEFT,
-            value: input[cursor],
-          });
-          cursor++;
-          break;
-        case ")":
-          tokens.push({
-            type: TokenTypes.PARENTHESIS_RIGHT,
-            value: input[cursor],
-          });
-          cursor++;
-        case " ":
-          cursor++;
-          break;
-        default:
-          throw new SyntaxError(`Unexpected token: "${input[cursor]}"`);
-      }
-    }
-  }
-  return tokens;
-}
 
 export function tokenize2(input: string): ReadonlyArray<Token> {
   const tokens: Array<Token> = [];
