@@ -3,6 +3,7 @@ export type AstNode =
   | OrExpression
   | AndExpression
   | AddExpr
+  | MulExpr
   | UnaryExpression
   | Identifier
   | Numeric
@@ -25,18 +26,23 @@ export interface AddExpr {
   readonly right: AstNode;
 }
 export type AddExprOperationType = "add" | "subtract";
+export interface MulExpr {
+  readonly type: "MulExpr";
+  readonly left: AstNode;
+  readonly operationType: MulExprOperationType;
+  readonly right: AstNode;
+}
+export type MulExprOperationType = "multiply" | "divide";
 export type OrExpression = {
   type: "OrExpression";
   left: AstNode;
   right: AstNode;
 };
-
 export type AndExpression = {
   type: "AndExpression";
   left: AstNode;
   right: AstNode;
 };
-
 export type ValueRanges = { type: "ValueRanges"; ranges: Array<AstNode> };
 export type ValueRangeExpr = { type: "ValueRangeExpr"; min: AstNode; max: AstNode };
 export type UnaryExpression = { type: "UnaryExpression"; value: Identifier | Numeric };
