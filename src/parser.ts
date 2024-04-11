@@ -86,16 +86,18 @@ function Factor(state: ParseState) {
 }
 
 function Primary(state: ParseState) {
-  if (state.lookahead?.type === TokenTypes.PARENTHESIS_LEFT) {
-    return ParenthesizedExpression(state);
-  }
+  if (state.lookahead !== null) {
+    if (state.lookahead.type === TokenTypes.PARENTHESIS_LEFT) {
+      return ParenthesizedExpression(state);
+    }
 
-  if (state.lookahead?.type === TokenTypes.SUBTRACTION) {
-    return UnaryExpression(state);
-  }
+    if (state.lookahead.type === TokenTypes.SUBTRACTION) {
+      return UnaryExpression(state);
+    }
 
-  if (state.lookahead?.type === TokenTypes.IDENTIFIER) {
-    return FunctionExpression(state);
+    if (state.lookahead.type === TokenTypes.IDENTIFIER) {
+      return FunctionExpression(state);
+    }
   }
 
   const token = eat(TokenTypes.NUMBER, state);
