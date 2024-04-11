@@ -12,7 +12,7 @@ export type EqualsExpr = Readonly<{
   type: "EqualsExpr";
   leftValue: PropertyValueExpr;
   operationType: EqualsOperationType;
-  rightValueRanges: ReadonlyArray<Expr>;
+  rightValueRanges: ReadonlyArray<ValueRangeExpr>;
 }>;
 export type EqualsOperationType = "equals" | "notEquals";
 export type AddExpr = Readonly<{ type: "AddExpr"; left: Expr; operationType: AddExprOperationType; right: Expr }>;

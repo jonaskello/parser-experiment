@@ -8,6 +8,7 @@ import {
   Expr,
   BooleanExpr,
   PropertyValueExpr,
+  ValueRangeExpr,
 } from "./ast";
 import { Token, TokenTypes, TokenizeState, getNextToken } from "./tokenizer";
 
@@ -75,7 +76,7 @@ function comparisonExpr(state: ParseState): BooleanExpr {
   // (_ ("=" / "!=") _ ValueRangeExpr ("," ValueRangeExpr)*) )
   if (op === TokenTypes.EQUALS || op === TokenTypes.NOT_EQUALS) {
     eat(op, state).value;
-    const valueRanges: Array<Expr> = [];
+    const valueRanges: Array<ValueRangeExpr> = [];
     const vr = valueRangeExpr(state);
     valueRanges.push(vr);
     while (state.lookahead !== null && (state.lookahead.type as ",") === TokenTypes.COMMA) {
@@ -90,14 +91,14 @@ function comparisonExpr(state: ParseState): BooleanExpr {
   throw new Error("Unexpected");
 }
 
-function valueRangeExpr(state: ParseState): Expr {
+function valueRangeExpr(state: ParseState): ValueRangeExpr {
   // ValueRangeExpr = AddExpr (_ "~" _ AddExpr)?
   const left = addExpr(state);
   if (state.lookahead?.type === TokenTypes.TILDE) {
     eat(TokenTypes.TILDE, state);
     return { type: "ValueRangeExpr", min: left, max: addExpr(state) };
   }
-  return left;
+  return { type: "ValueRangeExpr", min: left, max: left };
 }
 
 function addExpr(state: ParseState): PropertyValueExpr {
