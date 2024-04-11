@@ -6,39 +6,19 @@ export type BooleanExpr = OrExpr | AndExpr | EqualsExpr | ComparisonExpr | Empty
 
 export type PropertyValueExpr = IdentifierExpr | ValueExpr | NullExpr | AddExpr | MulExpr | UnaryExpr;
 
-export type EmptyExpr = { readonly type: "EmptyExpr" };
-export type NullExpr = { readonly type: "NullExpr" };
-export type EqualsExpr = {
-  readonly type: "EqualsExpr";
-  readonly leftValue: Expr;
-  readonly operationType: EqualsOperationType;
-  readonly rightValueRanges: ReadonlyArray<Expr>;
-};
+export type EmptyExpr = Readonly<{ type: "EmptyExpr" }>;
+export type NullExpr = Readonly<{ type: "NullExpr" }>;
+export type EqualsExpr = Readonly<{ type: "EqualsExpr"; leftValue: Expr; operationType: EqualsOperationType; rightValueRanges: ReadonlyArray<Expr> }>;
 export type EqualsOperationType = "equals" | "notEquals";
-export type AddExpr = {
-  readonly type: "AddExpr";
-  readonly left: Expr;
-  readonly operationType: AddExprOperationType;
-  readonly right: Expr;
-};
+export type AddExpr = Readonly<{ type: "AddExpr"; left: Expr; operationType: AddExprOperationType; right: Expr }>;
 export type AddExprOperationType = "add" | "subtract";
-export type MulExpr = {
-  readonly type: "MulExpr";
-  readonly left: Expr;
-  readonly operationType: MulExprOperationType;
-  readonly right: Expr;
-};
+export type MulExpr = Readonly<{ type: "MulExpr"; left: Expr; operationType: MulExprOperationType; right: Expr }>;
 export type MulExprOperationType = "multiply" | "divide";
-export type OrExpr = { type: "OrExpr"; left: Expr; right: Expr };
-export type AndExpr = { type: "AndExpr"; left: Expr; right: Expr };
-export type ComparisonExpr = {
-  readonly type: "ComparisonExpr";
-  readonly leftValue: Expr;
-  readonly operationType: ComparisonOperationType;
-  readonly rightValue: Expr;
-};
+export type OrExpr = Readonly<{ type: "OrExpr"; left: Expr; right: Expr; children: ReadonlyArray<BooleanExpr> }>;
+export type AndExpr = Readonly<{ type: "AndExpr"; left: Expr; right: Expr }>;
+export type ComparisonExpr = Readonly<{ type: "ComparisonExpr"; leftValue: Expr; operationType: ComparisonOperationType; rightValue: Expr }>;
 export type ComparisonOperationType = "greater" | "less" | "greaterOrEqual" | "lessOrEqual";
-export type ValueRangeExpr = { type: "ValueRangeExpr"; min: Expr; max: Expr };
-export type UnaryExpr = { type: "UnaryExpr"; value: IdentifierExpr | ValueExpr };
-export type IdentifierExpr = { type: "IdentifierExpr"; name: string; value: string };
-export type ValueExpr = { type: "ValueExpr"; value: number };
+export type ValueRangeExpr = Readonly<{ type: "ValueRangeExpr"; min: Expr; max: Expr }>;
+export type UnaryExpr = Readonly<{ type: "UnaryExpr"; value: IdentifierExpr | ValueExpr }>;
+export type IdentifierExpr = Readonly<{ type: "IdentifierExpr"; name: string; value: string }>;
+export type ValueExpr = Readonly<{ type: "ValueExpr"; value: number }>;
