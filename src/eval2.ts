@@ -154,11 +154,12 @@ function evaluatePropertyValueExpr(e: Ast.PropertyValueExpr, properties: Propert
           return null;
         }
       } else if (left.type === "amount" && right.type === "amount") {
-        if (e.operationType === "add") {
-          return fromAmount(amountPlus(left.value, right.value));
-        } else {
-          return fromAmount(amountMinus(left.value, right.value));
-        }
+        throw new Error("Amount not supported");
+        // if (e.operationType === "add") {
+        //   return fromAmount(amountPlus(left.value, right.value));
+        // } else {
+        //   return fromAmount(amountMinus(left.value, right.value));
+        // }
       }
       return null;
     }
@@ -175,15 +176,17 @@ function evaluatePropertyValueExpr(e: Ast.PropertyValueExpr, properties: Propert
           return fromInteger(left.value / right.value);
         }
       } else if (left.type === "amount" && right.type === "integer") {
-        if (e.operationType === "multiply") {
-          return fromAmount(amountTimes(left.value, right.value));
-        } else {
-          return fromAmount(amountDivide(left.value, right.value));
-        }
+        // if (e.operationType === "multiply") {
+        //   return fromAmount(amountTimes(left.value, right.value));
+        // } else {
+        //   return fromAmount(amountDivide(left.value, right.value));
+        // }
+        throw new Error("Amount not supported");
       } else if (left.type === "integer" && right.type === "amount") {
-        if (e.operationType === "multiply") {
-          return fromAmount(amountTimes(right.value, left.value));
-        }
+        // if (e.operationType === "multiply") {
+        //   return fromAmount(amountTimes(right.value, left.value));
+        // }
+        throw new Error("Amount not supported");
       }
       return null;
     }
@@ -195,7 +198,8 @@ function evaluatePropertyValueExpr(e: Ast.PropertyValueExpr, properties: Propert
       if (value.type === "integer") {
         return fromInteger(-value.value);
       } else {
-        return fromAmount(Amount.neg(value.value));
+        // return fromAmount(Amount.neg(value.value));
+        throw new Error("Amount not supported");
       }
     }
     default: {
@@ -273,10 +277,11 @@ function _compare(left: PropertyValue, right: PropertyValue): number {
       }
       throw new Error("Unexpected error comparing integers");
     case "amount":
-      if (right.type === "amount") {
-        return Amount.compareTo(left.value, right.value);
-      }
-      throw new Error("Unexpected error comparing amounts");
+      throw new Error("Amount not supported");
+    // if (right.type === "amount") {
+    //   return Amount.compareTo(left.value, right.value);
+    // }
+    // throw new Error("Unexpected error comparing amounts");
     case "text":
       if (right.type === "text") {
         return compareIgnoreCase(left.value, right.value);
@@ -340,6 +345,10 @@ export function compareNumbers(first: number, second: number, firstDecimals: num
 export function compareIgnoreCase(a: string, b: string): number {
   return a.toLowerCase().localeCompare(b.toLowerCase());
 }
+
+///// ---- AMOUNT
+
+/*
 
 export function amountPlus<T1, T2 extends T1>(left: Amount<T1>, right: Amount<T2>): Amount<T1> {
   const mostGranularAmount = getMostGranularAmount(left, right);
@@ -413,3 +422,5 @@ function _factory<T>(value: number, unit: Unit.Unit<T>, decimalCount: number): A
     decimalCount: decimalCount,
   };
 }
+
+*/
