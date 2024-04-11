@@ -10,7 +10,7 @@ export const TokenTypes = {
   SUBTRACTION: "-",
   MULTIPLICATION: "*",
   DIVISION: "/",
-  EXPONENTIATION: "^",
+  // EXPONENTIATION: "^",
   PARENTHESIS_LEFT: "(",
   PARENTHESIS_RIGHT: ")",
   //
@@ -66,8 +66,6 @@ export function getNextToken(input: string, state: TokenizeState): Token | null 
         return { type: TokenTypes.MULTIPLICATION, value: c };
       case "/":
         return { type: TokenTypes.DIVISION, value: c };
-      case "^":
-        return { type: TokenTypes.EXPONENTIATION, value: c };
       case "(":
         return { type: TokenTypes.PARENTHESIS_LEFT, value: c };
       case ")":
