@@ -1,4 +1,4 @@
-export type AstNode = BinaryExpression | UnaryExpression | Identifier | Numeric | ValueRanges | ValueRangeExpr;
+export type AstNode = BinaryExpression | OrExpression | AndExpression | UnaryExpression | Identifier | Numeric | ValueRanges | ValueRangeExpr;
 export type MathOperator = "+" | "-" | "/" | "*";
 export type ComparisionOperator = "=" | ">" | ">=" | "<" | "<=";
 export type LogicOperator = "&" | "|";
@@ -8,6 +8,21 @@ export type BinaryExpression = {
   left: AstNode;
   right: AstNode;
 };
+
+export type OrExpression = {
+  type: "OrExpression";
+  operator: MathOperator | ComparisionOperator | LogicOperator;
+  left: AstNode;
+  right: AstNode;
+};
+
+export type AndExpression = {
+  type: "AndExpression";
+  operator: MathOperator | ComparisionOperator | LogicOperator;
+  left: AstNode;
+  right: AstNode;
+};
+
 export type ValueRanges = { type: "ValueRanges"; ranges: Array<AstNode> };
 export type ValueRangeExpr = { type: "ValueRangeExpr"; min: AstNode; max: AstNode };
 export type UnaryExpression = { type: "UnaryExpression"; value: Identifier | Numeric };
