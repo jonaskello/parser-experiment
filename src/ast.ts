@@ -4,9 +4,22 @@ export type AstNode = OrExpr | AndExpr | AddExpr | MulExpr | ComparisonExpr | Un
 // export type Expr = BooleanExpr | PropertyValueExpr | ValueRangeExpr;
 
 // Expressions that result in a boolean
-// export type BooleanExpr = OrExpr | AndExpr | EqualsExpr | ComparisonExpr | EmptyExpr;
+export type BooleanExpr = OrExpr | AndExpr | EqualsExpr | ComparisonExpr | EmptyExpr;
 
 // export type PropertyValueExpr = IdentifierExpr | ValueExpr | NullExpr | AddExpr | MulExpr | UnaryExpr;
+
+export type EmptyExpr = {
+  readonly type: "EmptyExpr";
+};
+
+export type EqualsExpr = {
+  readonly type: "EqualsExpr";
+  readonly leftValue: AstNode;
+  readonly operationType: EqualsOperationType;
+  readonly rightValueRanges: ReadonlyArray<ValueRangeExpr>;
+};
+
+export type EqualsOperationType = "equals" | "notEquals";
 
 export type AddExpr = {
   readonly type: "AddExpr";
