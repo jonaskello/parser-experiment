@@ -1,5 +1,25 @@
 import { parse } from "./parser";
+import { TokenizeState, getNextToken } from "./tokenizer";
 
-// const ast = parse("size + (12 + 231) * -color + 5 - 1");
-const ast = parse("size=1+2 & a=3 | foo=55");
-console.dir(ast, { depth: null }); // log nested objects
+main();
+
+function main() {
+  const input = "size=1+2 & a=3 | foo>55";
+
+  printAllTokens(input);
+
+  const ast = parse(input);
+  console.dir(ast, { depth: null }); // log nested objects
+}
+
+function printAllTokens(input: string) {
+  const state: TokenizeState = { cursor: 0 };
+  let t;
+  while (true) {
+    t = getNextToken(input, state);
+    if (t === null) {
+      break;
+    }
+    console.log("t", t);
+  }
+}

@@ -4,19 +4,21 @@ export type Token = {
 };
 
 export const TokenTypes = {
+  OR: "|",
+  AND: "&",
+  EQUALS: "=",
+  GREATER_EQUALS: ">=",
+  LESS_EQUALS: "<=",
+  GREATER: ">",
+  LESS: "<",
   NUMBER: "NUMBER",
   IDENTIFIER: "IDENTIFIER",
   ADDITION: "+",
   SUBTRACTION: "-",
   MULTIPLICATION: "*",
   DIVISION: "/",
-  // EXPONENTIATION: "^",
   PARENTHESIS_LEFT: "(",
   PARENTHESIS_RIGHT: ")",
-  //
-  OR: "|",
-  AND: "&",
-  EQUALS: "=",
 };
 
 const isNumeric = (c: string) => !isNaN(parseInt(c));
@@ -58,6 +60,26 @@ export function getNextToken(input: string, state: TokenizeState): Token | null 
   } else {
     const c = input[state.cursor++];
     switch (c) {
+      case "|":
+        return { type: TokenTypes.OR, value: c };
+      case "&":
+        return { type: TokenTypes.AND, value: c };
+      case "=":
+        return { type: TokenTypes.EQUALS, value: c };
+      case ">": {
+        if (input[state.cursor] === "=") {
+          state.cursor++;
+          return { type: TokenTypes.GREATER_EQUALS, value: ">=" };
+        }
+        return { type: TokenTypes.GREATER, value: c };
+      }
+      case "<": {
+        if (input[state.cursor] === "=") {
+          state.cursor++;
+          return { type: TokenTypes.LESS_EQUALS, value: c };
+        }
+        return { type: TokenTypes.LESS, value: "<=" };
+      }
       case "+":
         return { type: TokenTypes.ADDITION, value: c };
       case "-":
@@ -70,13 +92,6 @@ export function getNextToken(input: string, state: TokenizeState): Token | null 
         return { type: TokenTypes.PARENTHESIS_LEFT, value: c };
       case ")":
         return { type: TokenTypes.PARENTHESIS_RIGHT, value: c };
-      //
-      case "|":
-        return { type: TokenTypes.OR, value: c };
-      case "&":
-        return { type: TokenTypes.AND, value: c };
-      case "=":
-        return { type: TokenTypes.EQUALS, value: c };
       default:
         throw new SyntaxError(`Unexpected token: "${c}"`);
     }

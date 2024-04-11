@@ -7,20 +7,7 @@ type ParseState = {
 };
 
 export function parse(input: string) {
-  const state: ParseState = {
-    tokenizeState: { cursor: 0 },
-    input,
-    lookahead: null,
-  };
-
-  // let t;
-  // while (true) {
-  //   t = getNextToken(input, state.tokenizeState);
-  //   if (t === null) {
-  //     break;
-  //   }
-  //   console.log("t", t);
-  // }
+  const state: ParseState = { tokenizeState: { cursor: 0 }, input, lookahead: null };
 
   state.lookahead = getNextToken(input, state.tokenizeState);
 
@@ -54,17 +41,17 @@ function ComparisonExpr(state: ParseState) {
 }
 
 function ValueRangeExpr(state: ParseState) {
-  // ValueRangeExpr  = AddExpr (_ "~" _ AddExpr)?
+  // ValueRangeExpr = AddExpr (_ "~" _ AddExpr)?
   return AddExpr(state);
 }
 
 function AddExpr(state: ParseState) {
-  // AddExpr  =	(  (MultiplyExpr _ ("+" / "-") _ AddExpr) ) / MultiplyExpr
+  // AddExpr =	( (MultiplyExpr _ ("+" / "-") _ AddExpr) ) / MultiplyExpr
   return BinaryExpression(state, MultiplyExpr, AddExpr, TokenTypes.ADDITION, TokenTypes.SUBTRACTION);
 }
 
 function MultiplyExpr(state: ParseState) {
-  // MultiplyExpr  =	( (UnaryExpr _ ("*" / "/") _ MultiplyExpr)  ) / UnaryExpr
+  // MultiplyExpr =	( (UnaryExpr _ ("*" / "/") _ MultiplyExpr)  ) / UnaryExpr
   return BinaryExpression(state, UnaryExpr, MultiplyExpr, TokenTypes.MULTIPLICATION, TokenTypes.DIVISION);
 }
 
