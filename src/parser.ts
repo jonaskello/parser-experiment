@@ -25,9 +25,7 @@ function eat(tokenType, state: ParseState) {
   }
 
   if (token.type !== tokenType) {
-    throw new SyntaxError(
-      `Unexpected token: "${token.value}", expected "${tokenType}"`
-    );
+    throw new SyntaxError(`Unexpected token: "${token.value}", expected "${tokenType}"`);
   }
 
   state.lookahead = getNextToken(state.input, state.tokenizeState);
@@ -35,20 +33,10 @@ function eat(tokenType, state: ParseState) {
   return token;
 }
 
-function BinaryExpression(
-  state: ParseState,
-  leftRule,
-  rightRule,
-  operatorType1,
-  operatorType2?
-) {
+function BinaryExpression(state: ParseState, leftRule, rightRule, operatorType1, operatorType2?) {
   let left = leftRule(state);
 
-  while (
-    state.lookahead &&
-    (state.lookahead.type === operatorType1 ||
-      state.lookahead.type === operatorType2)
-  ) {
+  while (state.lookahead && (state.lookahead.type === operatorType1 || state.lookahead.type === operatorType2)) {
     const operator = eat(state.lookahead.type, state).value;
     left = {
       type: "BinaryExpression",
@@ -62,23 +50,11 @@ function BinaryExpression(
 }
 
 function Expression(state: ParseState) {
-  return BinaryExpression(
-    state,
-    Term,
-    Term,
-    TokenTypes.ADDITION,
-    TokenTypes.SUBTRACTION
-  );
+  return BinaryExpression(state, Term, Term, TokenTypes.ADDITION, TokenTypes.SUBTRACTION);
 }
 
 function Term(state: ParseState) {
-  return BinaryExpression(
-    state,
-    Factor,
-    Factor,
-    TokenTypes.MULTIPLICATION,
-    TokenTypes.DIVISION
-  );
+  return BinaryExpression(state, Factor, Factor, TokenTypes.MULTIPLICATION, TokenTypes.DIVISION);
 }
 
 function Factor(state: ParseState) {
