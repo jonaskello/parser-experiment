@@ -20,22 +20,15 @@ export type BooleanExpr = OrExpr | AndExpr | EqualsExpr | ComparisonExpr | Empty
 
 export type PropertyValueExpr = IdentifierExpr | ValueExpr | NullExpr | AddExpr | MulExpr | UnaryExpr;
 
-export type EmptyExpr = {
-  readonly type: "EmptyExpr";
-};
-export type NullExpr = {
-  readonly type: "NullExpr";
-};
-
+export type EmptyExpr = { readonly type: "EmptyExpr" };
+export type NullExpr = { readonly type: "NullExpr" };
 export type EqualsExpr = {
   readonly type: "EqualsExpr";
   readonly leftValue: AstNode;
   readonly operationType: EqualsOperationType;
   readonly rightValueRanges: ReadonlyArray<AstNode>;
 };
-
 export type EqualsOperationType = "equals" | "notEquals";
-
 export type AddExpr = {
   readonly type: "AddExpr";
   readonly left: AstNode;
@@ -50,16 +43,8 @@ export type MulExpr = {
   readonly right: AstNode;
 };
 export type MulExprOperationType = "multiply" | "divide";
-export type OrExpr = {
-  type: "OrExpr";
-  left: AstNode;
-  right: AstNode;
-};
-export type AndExpr = {
-  type: "AndExpr";
-  left: AstNode;
-  right: AstNode;
-};
+export type OrExpr = { type: "OrExpr"; left: AstNode; right: AstNode };
+export type AndExpr = { type: "AndExpr"; left: AstNode; right: AstNode };
 export type ComparisonExpr = {
   readonly type: "ComparisonExpr";
   readonly leftValue: AstNode;
@@ -71,37 +56,3 @@ export type ValueRangeExpr = { type: "ValueRangeExpr"; min: AstNode; max: AstNod
 export type UnaryExpr = { type: "UnaryExpr"; value: IdentifierExpr | ValueExpr };
 export type IdentifierExpr = { type: "IdentifierExpr"; name: string; value: string };
 export type ValueExpr = { type: "ValueExpr"; value: number };
-
-/*
-type ParserCallbacks = {
-  createValueExpr(unparsed: string): Ast.ValueExpr;
-  createNullExpr(): Ast.NullExpr;
-  createIdentifierExpr(identToken: string): Ast.IdentifierExpr;
-  createValueRangeExpr(v1: Ast.PropertyValueExpr, v2: Ast.PropertyValueExpr): Ast.ValueRangeExpr;
-  createEqualsExpr(
-    leftValue: Ast.PropertyValueExpr,
-    operationType: Ast.EqualsOperationType,
-    rightValueRanges: ReadonlyArray<Ast.ValueRangeExpr>
-  ): Ast.EqualsExpr;
-  createComparisonExpr(
-    leftValue: Ast.PropertyValueExpr,
-    operationType: Ast.ComparisonOperationType,
-    rightValue: Ast.PropertyValueExpr
-  ): Ast.ComparisonExpr;
-  createAndExpr(children: ReadonlyArray<Ast.BooleanExpr>): Ast.AndExpr;
-  createOrExpr(children: ReadonlyArray<Ast.BooleanExpr>): Ast.OrExpr;
-  createAddExpr(
-    left: Ast.PropertyValueExpr,
-    operationType: Ast.AddExprOperationType,
-    right: Ast.PropertyValueExpr
-  ): Ast.AddExpr;
-  createMulExpr(
-    left: Ast.PropertyValueExpr,
-    operationType: Ast.MulExprOperationType,
-    right: Ast.PropertyValueExpr
-  ): Ast.MulExpr;
-  createUnaryExpr(operationType: Ast.UnaryExprOperationType, value: Ast.PropertyValueExpr): Ast.UnaryExpr;
-};
-
-
-*/
