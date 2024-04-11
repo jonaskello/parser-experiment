@@ -51,7 +51,7 @@ export const TokenTypes = {
   IDENTIFIER: "IDENTIFIER",
 } as const;
 
-const isNumeric = (c: string) => !isNaN(parseInt(c));
+const isDigit = (c: string) => !isNaN(parseInt(c));
 const isLetter = (c: string) => {
   const code = c.charCodeAt(0);
   return (code >= 65 && code <= 90) || (code >= 97 && code <= 122);
@@ -75,9 +75,9 @@ export function getNextToken(input: string, state: TokenizeState): Token | null 
   }
 
   // Get next token
-  if (isNumeric(input[state.cursor])) {
+  if (isDigit(input[state.cursor])) {
     let number = input[state.cursor++];
-    while (state.cursor < input.length && isNumeric(input[state.cursor])) {
+    while (state.cursor < input.length && isDigit(input[state.cursor])) {
       number += input[state.cursor++];
     }
     return { type: TokenTypes.NUMBER, value: number };
