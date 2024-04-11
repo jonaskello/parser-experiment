@@ -130,7 +130,7 @@ function unaryExpr(state: ParseState): PropertyValueExpr {
   // UnaryExpr  = ( ("-" ValueExpr) ) / ValueExpr;
   if (state.lookahead?.type === TokenTypes.MINUS) {
     eat(TokenTypes.MINUS, state);
-    return { type: "UnaryExpr", value: valueExpr(state) };
+    return { type: "UnaryExpr", operationType: "negative", value: valueExpr(state) };
   }
   return valueExpr(state);
 }
