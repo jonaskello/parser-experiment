@@ -46,7 +46,7 @@ function eat(tokenType: string, state: ParseState) {
 function BinaryExpression(state: ParseState, leftRule, rightRule, operatorType1, operatorType2?) {
   let left = leftRule(state);
 
-  while (state.lookahead && (state.lookahead.type === operatorType1 || state.lookahead.type === operatorType2)) {
+  while (state.lookahead !== null && (state.lookahead.type === operatorType1 || state.lookahead.type === operatorType2)) {
     const operator = eat(state.lookahead.type, state).value;
     left = {
       type: "BinaryExpression",
