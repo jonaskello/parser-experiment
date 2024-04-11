@@ -2,14 +2,13 @@ import { Token, TokenTypes, TokenizeState, getNextToken } from "./tokenizer";
 
 type ParseState = { input: string; lookahead: Token | null; tokenizeState: TokenizeState };
 
-type AstNode = BinaryExpression | UnaryExpression | Identifier | Number;
+type RuleFn = (state: ParseState) => AstNode;
 
+type AstNode = BinaryExpression | UnaryExpression | Identifier | Number;
 type BinaryExpression = { type: "BinaryExpression"; operator: string; left: AstNode; right: AstNode };
 type UnaryExpression = { type: "UnaryExpression"; value: Identifier | Number };
 type Identifier = { type: "Identifier"; name: string; value: string };
 type Number = { type: "Number"; value: number };
-
-type RuleFn = (state: ParseState) => AstNode;
 
 export function parse(input: string): AstNode {
   const state: ParseState = { tokenizeState: { cursor: 0 }, input, lookahead: null };
