@@ -317,3 +317,25 @@ export function exhaustiveCheck(check: never, throwError: boolean = false): neve
   }
   return check;
 }
+
+export function compareNumbers(first: number, second: number, firstDecimals: number, secondDecimals: number): number {
+  const d = Math.max(firstDecimals, secondDecimals); // use the highest number of decimals
+
+  // eslint-disable-next-line no-restricted-properties
+  const f = Math.round(first * Math.pow(10, d));
+  // eslint-disable-next-line no-restricted-properties
+  const s = Math.round(second * Math.pow(10, d));
+
+  if (f === s) {
+    return 0;
+  }
+  if (f < s) {
+    return -1;
+  } else {
+    return 1;
+  }
+}
+
+export function compareIgnoreCase(a: string, b: string): number {
+  return a.toLowerCase().localeCompare(b.toLowerCase());
+}
