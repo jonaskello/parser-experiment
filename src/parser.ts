@@ -6,65 +6,70 @@ type ParseState = {
   tokenizeState: TokenizeState;
 };
 
-export function parse(input: string) {
+type AstNode = {
+  type: string;
+  value: string;
+};
+
+export function parse(input: string): AstNode {
   const state: ParseState = { tokenizeState: { cursor: 0 }, input, lookahead: null };
 
   state.lookahead = getNextToken(input, state.tokenizeState);
 
-  return OrExpr(state);
+  return orExpr(state);
 }
 
-function OrExpr(state: ParseState) {
+function orExpr(state: ParseState) {
   // OrExpr = AndExpr (_ "|" _ i:AndExpr)*
-  return BinaryExpression(state, AndExpr, AndExpr, TokenTypes.OR);
+  return binaryExpression(state, andExpr, andExpr, TokenTypes.OR);
 }
 
-function AndExpr(state: ParseState) {
+function andExpr(state: ParseState) {
   // AndExpr = Expr (_ "&" _ Expr)*
-  return BinaryExpression(state, Expr, Expr, TokenTypes.AND);
+  return binaryExpression(state, expr, expr, TokenTypes.AND);
 }
 
-function Expr(state: ParseState) {
+function expr(state: ParseState) {
   // Expr  = ("(" OrExpr ")")  /	ComparisonExpr
   if (state.lookahead?.type === TokenTypes.PARENTHESIS_LEFT) {
     eat(TokenTypes.PARENTHESIS_LEFT, state);
-    const expression = OrExpr(state);
+    const expression = orExpr(state);
     eat(TokenTypes.PARENTHESIS_RIGHT, state);
     return expression;
   }
-  return ComparisonExpr(state);
+  return comparisonExpr(state);
 }
 
-function ComparisonExpr(state: ParseState) {
+function comparisonExpr(state: ParseState): AstNode {
   // ComparisonExpr = ( AddExpr ( (_ (">=" / "<=" / ">" / "<") _ AddExpr) / (_ ("=" / "!=") _ ValueRangeExpr ("," ValueRangeExpr)*) ) )
-  return BinaryExpression(state, AddExpr, ValueRangeExpr, TokenTypes.EQUALS);
+  return binaryExpression(state, addExpr, valueRangeExpr, TokenTypes.EQUALS);
 }
 
-function ValueRangeExpr(state: ParseState) {
+function valueRangeExpr(state: ParseState): AstNode {
   // ValueRangeExpr = AddExpr (_ "~" _ AddExpr)?
-  return AddExpr(state);
+  return addExpr(state);
 }
 
-function AddExpr(state: ParseState) {
+function addExpr(state: ParseState): AstNode {
   // AddExpr =	( (MultiplyExpr _ ("+" / "-") _ AddExpr) ) / MultiplyExpr
-  return BinaryExpression(state, MultiplyExpr, AddExpr, TokenTypes.ADDITION, TokenTypes.SUBTRACTION);
+  return binaryExpression(state, multiplyExpr, addExpr, TokenTypes.ADDITION, TokenTypes.SUBTRACTION);
 }
 
-function MultiplyExpr(state: ParseState) {
+function multiplyExpr(state: ParseState) {
   // MultiplyExpr =	( (UnaryExpr _ ("*" / "/") _ MultiplyExpr)  ) / UnaryExpr
-  return BinaryExpression(state, UnaryExpr, MultiplyExpr, TokenTypes.MULTIPLICATION, TokenTypes.DIVISION);
+  return binaryExpression(state, unaryExpr, multiplyExpr, TokenTypes.MULTIPLICATION, TokenTypes.DIVISION);
 }
 
-function UnaryExpr(state: ParseState) {
+function unaryExpr(state: ParseState) {
   // UnaryExpr  = ( ("-" ValueExpr) ) / ValueExpr;
   if (state.lookahead?.type === TokenTypes.SUBTRACTION) {
     eat(TokenTypes.SUBTRACTION, state);
-    return { type: "UnaryExpression", value: ValueExpr(state) };
+    return { type: "UnaryExpression", value: valueExpr(state) };
   }
-  return ValueExpr(state);
+  return valueExpr(state);
 }
 
-function ValueExpr(state: ParseState) {
+function valueExpr(state: ParseState) {
   // ValueExpr  = "null" / ident (":" ident)? / propval
   if (state.lookahead?.type === TokenTypes.IDENTIFIER) {
     const token = eat(TokenTypes.IDENTIFIER, state);
@@ -75,7 +80,7 @@ function ValueExpr(state: ParseState) {
   return { type: "Number", value: Number(token.value) };
 }
 
-function BinaryExpression(state: ParseState, leftRule, rightRule, operatorType1, operatorType2?) {
+function binaryExpression(state: ParseState, leftRule, rightRule, operatorType1, operatorType2?) {
   let left = leftRule(state);
 
   while (state.lookahead !== null && (state.lookahead.type === operatorType1 || state.lookahead.type === operatorType2)) {
