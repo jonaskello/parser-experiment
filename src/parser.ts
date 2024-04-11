@@ -1,4 +1,4 @@
-import { ComparisonOperationType, EqualsOperationType, IdentifierExpr, MulExpr, ValueExpr, UnaryExpr, Expr } from "./ast";
+import { ComparisonOperationType, EqualsOperationType, IdentifierExpr, MulExpr, ValueExpr, UnaryExpr, Expr, BooleanExpr } from "./ast";
 import { Token, TokenTypes, TokenizeState, getNextToken } from "./tokenizer";
 
 type ParseState = { input: string; lookahead: Token | null; tokenizeState: TokenizeState };
@@ -18,11 +18,13 @@ export function parse(input: string): Expr {
 function orExpr(state: ParseState): Expr {
   // OrExpr = AndExpr (_ "|" _ AndExpr)*
   let left = andExpr(state);
+  const children: Array<Expr> = [left];
   while (state.lookahead !== null && state.lookahead.type === TokenTypes.OR) {
     eat(state.lookahead.type, state).value;
-    left = { type: "OrExpr", left, right: andExpr(state) };
+    const e = andExpr(state);
+    children.push(e);
   }
-  return left;
+  return { type: "OrExpr", children };
 }
 
 function andExpr(state: ParseState): Expr {
