@@ -1,4 +1,14 @@
-export type AstNode = BinaryExpression | OrExpression | AndExpression | UnaryExpression | Identifier | Numeric | ValueRanges | ValueRangeExpr;
+export type AstNode =
+  | BinaryExpression
+  | OrExpression
+  | AndExpression
+  | AddExpr
+  | UnaryExpression
+  | Identifier
+  | Numeric
+  | ValueRanges
+  | ValueRangeExpr;
+
 export type MathOperator = "+" | "-" | "/" | "*";
 export type ComparisionOperator = "=" | ">" | ">=" | "<" | "<=";
 export type LogicOperator = "&" | "|";
@@ -8,7 +18,13 @@ export type BinaryExpression = {
   left: AstNode;
   right: AstNode;
 };
-
+export interface AddExpr {
+  readonly type: "AddExpr";
+  readonly left: AstNode;
+  readonly operationType: AddExprOperationType;
+  readonly right: AstNode;
+}
+export type AddExprOperationType = "add" | "subtract";
 export type OrExpression = {
   type: "OrExpression";
   left: AstNode;

@@ -1,4 +1,4 @@
-import { AstNode, BinaryExpression, ComparisionOperator, Identifier, MathOperator, Numeric, UnaryExpression } from "./ast";
+import { AddExpr, AstNode, BinaryExpression, ComparisionOperator, Identifier, MathOperator, Numeric, UnaryExpression } from "./ast";
 import { Token, TokenTypes, TokenizeState, getNextToken } from "./tokenizer";
 
 type ParseState = { input: string; lookahead: Token | null; tokenizeState: TokenizeState };
@@ -89,10 +89,11 @@ function valueRangeExpr(state: ParseState): AstNode {
 function addExpr(state: ParseState): AstNode {
   // AddExpr =	( (MultiplyExpr _ ("+" / "-") _ AddExpr) ) / MultiplyExpr
   let left = multiplyExpr(state);
-  if (state.lookahead?.type === TokenTypes.PLUS || state.lookahead?.type === TokenTypes.MINUS) {
-    eat(state.lookahead?.type, state);
+  const op = state.lookahead?.type;
+  if (op === TokenTypes.PLUS || op === TokenTypes.MINUS) {
+    eat(op, state);
     const right = addExpr(state);
-    return { type: "BinaryExpression", operator: state.lookahead?.type as MathOperator, left, right };
+    return { type: "AddExpr", operationType: op === "+" ? "add" : "subtract", left, right };
   }
   return left;
 }
