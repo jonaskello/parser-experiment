@@ -17,6 +17,7 @@ function main() {
   printAst(ast);
 
   const result = evalAst(ast);
+  console.log("result", result);
 }
 
 function printAllTokens(input: string) {
