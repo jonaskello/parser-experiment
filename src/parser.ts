@@ -3,8 +3,6 @@ import { Token, TokenTypes, TokenizeState, getNextToken } from "./tokenizer";
 
 type ParseState = { input: string; lookahead: Token | null; tokenizeState: TokenizeState };
 
-type RuleFn = (state: ParseState) => AstNode;
-
 export function parse(input: string): AstNode {
   const state: ParseState = { tokenizeState: { cursor: 0 }, input, lookahead: null };
 
@@ -25,7 +23,12 @@ function orExpr(state: ParseState): AstNode {
 
 function andExpr(state: ParseState): AstNode {
   // AndExpr = Expr (_ "&" _ Expr)*
-  return binaryExpression(state, expr, expr, TokenTypes.AND);
+  let left = expr(state);
+  while (state.lookahead !== null && state.lookahead.type === TokenTypes.AND) {
+    const operator = eat(state.lookahead.type, state).value as MathOperator | ComparisionOperator;
+    left = { type: "BinaryExpression", operator, left, right: expr(state) };
+  }
+  return left;
 }
 
 function expr(state: ParseState) {
@@ -123,15 +126,6 @@ function valueExpr(state: ParseState): Identifier | Numeric {
 
   const token = eat(TokenTypes.NUMBER, state);
   return { type: "Numeric", value: Number(token.value) };
-}
-
-function binaryExpression(state: ParseState, leftRule: RuleFn, rightRule: RuleFn, operatorType1: string, operatorType2?: string): AstNode {
-  let left = leftRule(state);
-  while (state.lookahead !== null && (state.lookahead.type === operatorType1 || state.lookahead.type === operatorType2)) {
-    const operator = eat(state.lookahead.type, state).value as MathOperator | ComparisionOperator;
-    left = { type: "BinaryExpression", operator, left, right: rightRule(state) };
-  }
-  return left;
 }
 
 function eat(tokenType: string, state: ParseState): Token {
