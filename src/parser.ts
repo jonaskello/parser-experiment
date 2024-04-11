@@ -71,9 +71,10 @@ function comparisonExpr(state: ParseState): AstNode {
 function valueRangeExpr(state: ParseState): AstNode {
   // ValueRangeExpr = AddExpr (_ "~" _ AddExpr)?
   const left = addExpr(state);
-  // if (state.lookahead?.type === TokenTypes.) {
-  //   return left;
-  // }
+  if (state.lookahead?.type === TokenTypes.TILDE) {
+    eat(TokenTypes.TILDE, state);
+    return { type: "ValueRangeExpr", min: left, max: addExpr(state) };
+  }
   return left;
 }
 
