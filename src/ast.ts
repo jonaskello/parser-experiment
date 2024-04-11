@@ -3,14 +3,14 @@ export type AstNode = OrExpr | AndExpr | AddExpr | MulExpr | ComparisonExpr | Un
 // // All expression
 // export type Expr = BooleanExpr | PropertyValueExpr | ValueRangeExpr;
 
-// // Expressions that result in a boolean
+// Expressions that result in a boolean
 // export type BooleanExpr = OrExpr | AndExpr | EqualsExpr | ComparisonExpr | EmptyExpr;
 
 // export type PropertyValueExpr = IdentifierExpr | ValueExpr | NullExpr | AddExpr | MulExpr | UnaryExpr;
 
-export type MathOperator = "+" | "-" | "/" | "*";
-export type ComparisionOperator = "=" | ">" | ">=" | "<" | "<=";
-export type LogicOperator = "&" | "|";
+// export type MathOperator = "+" | "-" | "/" | "*";
+// export type ComparisionOperator = "=" | ">" | ">=" | "<" | "<=";
+// export type LogicOperator = "&" | "|";
 export interface AddExpr {
   readonly type: "AddExpr";
   readonly left: AstNode;

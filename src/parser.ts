@@ -1,4 +1,4 @@
-import { AstNode, ComparisionOperator, ComparisonOperationType, IdentifierExpr, MathOperator, MulExpr, Numeric, UnaryExpr } from "./ast";
+import { AstNode, ComparisonOperationType, IdentifierExpr, MulExpr, Numeric, UnaryExpr } from "./ast";
 import { Token, TokenTypes, TokenizeState, getNextToken } from "./tokenizer";
 
 type ParseState = { input: string; lookahead: Token | null; tokenizeState: TokenizeState };
@@ -15,7 +15,7 @@ function orExpr(state: ParseState): AstNode {
   // OrExpr = AndExpr (_ "|" _ AndExpr)*
   let left = andExpr(state);
   while (state.lookahead !== null && state.lookahead.type === TokenTypes.OR) {
-    eat(state.lookahead.type, state).value as MathOperator | ComparisionOperator;
+    eat(state.lookahead.type, state).value;
     left = { type: "OrExpr", left, right: andExpr(state) };
   }
   return left;
@@ -25,7 +25,7 @@ function andExpr(state: ParseState): AstNode {
   // AndExpr = Expr (_ "&" _ Expr)*
   let left = expr(state);
   while (state.lookahead !== null && state.lookahead.type === TokenTypes.AND) {
-    eat(state.lookahead.type, state).value as MathOperator | ComparisionOperator;
+    eat(state.lookahead.type, state).value;
     left = { type: "AndExpr", left, right: expr(state) };
   }
   return left;
@@ -50,7 +50,7 @@ function comparisonExpr(state: ParseState): AstNode {
   // ( (_ (">=" / "<=" / ">" / "<") _ AddExpr)
   const op = state.lookahead?.type;
   if (op === TokenTypes.GREATER_EQUALS || op === TokenTypes.LESS_EQUALS || op === TokenTypes.GREATER || op === TokenTypes.LESS) {
-    eat(op, state).value as ComparisionOperator;
+    eat(op, state).value;
     const operationType: ComparisonOperationType = op === ">=" ? "greaterOrEqual" : op === "<=" ? "lessOrEqual" : op === ">" ? "greater" : "less";
     left = { type: "ComparisonExpr", operationType, leftValue: left, rightValue: addExpr(state) };
     return left;
