@@ -62,7 +62,6 @@ function expr(state: ParseState): BooleanExpr {
 
 function comparisonExpr(state: ParseState): BooleanExpr {
   // ComparisonExpr = AddExpr ( (_ (">=" / "<=" / ">" / "<") _ AddExpr) / (_ ("=" / "!=") _ ValueRangeExpr ("," ValueRangeExpr)*) )
-
   let left = addExpr(state);
 
   // ( (_ (">=" / "<=" / ">" / "<") _ AddExpr)
@@ -70,8 +69,7 @@ function comparisonExpr(state: ParseState): BooleanExpr {
   if (op === TokenTypes.GREATER_EQUALS || op === TokenTypes.LESS_EQUALS || op === TokenTypes.GREATER || op === TokenTypes.LESS) {
     eat(op, state).value;
     const operationType: ComparisonOperationType = op === ">=" ? "greaterOrEqual" : op === "<=" ? "lessOrEqual" : op === ">" ? "greater" : "less";
-    left = { type: "ComparisonExpr", operationType, leftValue: left, rightValue: addExpr(state) };
-    return left;
+    return { type: "ComparisonExpr", operationType, leftValue: left, rightValue: addExpr(state) };
   }
 
   // (_ ("=" / "!=") _ ValueRangeExpr ("," ValueRangeExpr)*) )
@@ -102,7 +100,7 @@ function valueRangeExpr(state: ParseState): Expr {
   return left;
 }
 
-function addExpr(state: ParseState): Expr {
+function addExpr(state: ParseState): PropertyValueExpr {
   // AddExpr =	( (MultiplyExpr _ ("+" / "-") _ AddExpr) ) / MultiplyExpr
   let left = multiplyExpr(state);
   const op = state.lookahead?.type;
