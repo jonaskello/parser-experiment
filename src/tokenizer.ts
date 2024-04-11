@@ -56,7 +56,6 @@ const isLetter = (c: string) => {
   const code = c.charCodeAt(0);
   return (code >= 65 && code <= 90) || (code >= 97 && code <= 122);
 };
-// letter / "." / "_"
 const isIdentLetter = (c: string) => isLetter(c) || c === "." || c === "_";
 const isWhitespace = (c: string) => c === " ";
 
