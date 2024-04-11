@@ -15,8 +15,8 @@ function orExpr(state: ParseState): AstNode {
   // OrExpr = AndExpr (_ "|" _ i:AndExpr)*
   let left = andExpr(state);
   while (state.lookahead !== null && state.lookahead.type === TokenTypes.OR) {
-    const operator = eat(state.lookahead.type, state).value as MathOperator | ComparisionOperator;
-    left = { type: "OrExpression", operator, left, right: andExpr(state) };
+    eat(state.lookahead.type, state).value as MathOperator | ComparisionOperator;
+    left = { type: "OrExpression", left, right: andExpr(state) };
   }
   return left;
 }
@@ -25,8 +25,8 @@ function andExpr(state: ParseState): AstNode {
   // AndExpr = Expr (_ "&" _ Expr)*
   let left = expr(state);
   while (state.lookahead !== null && state.lookahead.type === TokenTypes.AND) {
-    const operator = eat(state.lookahead.type, state).value as MathOperator | ComparisionOperator;
-    left = { type: "AndExpression", operator, left, right: expr(state) };
+    eat(state.lookahead.type, state).value as MathOperator | ComparisionOperator;
+    left = { type: "AndExpression", left, right: expr(state) };
   }
   return left;
 }

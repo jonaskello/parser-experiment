@@ -11,14 +11,12 @@ export type BinaryExpression = {
 
 export type OrExpression = {
   type: "OrExpression";
-  operator: MathOperator | ComparisionOperator | LogicOperator;
   left: AstNode;
   right: AstNode;
 };
 
 export type AndExpression = {
   type: "AndExpression";
-  operator: MathOperator | ComparisionOperator | LogicOperator;
   left: AstNode;
   right: AstNode;
 };
