@@ -1,7 +1,7 @@
 import * as Ast from "./ast";
 
-export type Comparer = (left: Ast.PropertyValue, right: Ast.PropertyValue) => number;
-export const defaultComparer: Comparer = (left: Ast.PropertyValue, right: Ast.PropertyValue) => _compare(left, right);
+type Comparer = (left: Ast.PropertyValue, right: Ast.PropertyValue) => number;
+const defaultComparer: Comparer = (left: Ast.PropertyValue, right: Ast.PropertyValue) => _compare(left, right);
 
 export function evaluateAst(
   e: Ast.BooleanExpr,
