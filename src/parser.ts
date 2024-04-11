@@ -135,7 +135,7 @@ function unaryExpr(state: ParseState): PropertyValueExpr {
   return valueExpr(state);
 }
 
-function valueExpr(state: ParseState): IdentifierExpr | ValueExpr {
+function valueExpr(state: ParseState): PropertyValueExpr {
   // ValueExpr  = "null" / ident (":" ident)? / propval
   if (state.lookahead?.type === TokenTypes.IDENTIFIER) {
     const token = eat(TokenTypes.IDENTIFIER, state);

@@ -19,6 +19,6 @@ export type AndExpr = Readonly<{ type: "AndExpr"; children: ReadonlyArray<Boolea
 export type ComparisonExpr = Readonly<{ type: "ComparisonExpr"; leftValue: Expr; operationType: ComparisonOperationType; rightValue: Expr }>;
 export type ComparisonOperationType = "greater" | "less" | "greaterOrEqual" | "lessOrEqual";
 export type ValueRangeExpr = Readonly<{ type: "ValueRangeExpr"; min: Expr; max: Expr }>;
-export type UnaryExpr = Readonly<{ type: "UnaryExpr"; value: IdentifierExpr | ValueExpr }>;
+export type UnaryExpr = Readonly<{ type: "UnaryExpr"; value: PropertyValueExpr }>;
 export type IdentifierExpr = Readonly<{ type: "IdentifierExpr"; name: string; value: string }>;
 export type ValueExpr = Readonly<{ type: "ValueExpr"; value: number }>;
