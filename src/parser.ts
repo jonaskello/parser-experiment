@@ -4,8 +4,10 @@ type ParseState = { input: string; lookahead: Token | null; tokenizeState: Token
 
 type RuleFn = (state: ParseState) => AstNode;
 
-type AstNode = BinaryExpression | UnaryExpression | Identifier | Number;
+type AstNode = BinaryExpression | UnaryExpression | Identifier | Number | ValueRanges | ValueRangeExpr;
 type BinaryExpression = { type: "BinaryExpression"; operator: string; left: AstNode; right: AstNode };
+type ValueRanges = { type: "ValueRanges"; ranges: Array<AstNode> };
+type ValueRangeExpr = { type: "ValueRangeExpr"; min: AstNode; max: AstNode };
 type UnaryExpression = { type: "UnaryExpression"; value: Identifier | Number };
 type Identifier = { type: "Identifier"; name: string; value: string };
 type Number = { type: "Number"; value: number };
@@ -58,11 +60,16 @@ function comparisonExpr(state: ParseState): AstNode {
 
   // (_ ("=" / "!=") _ ValueRangeExpr ("," ValueRangeExpr)*) )
   if (state.lookahead?.type === TokenTypes.EQUALS || state.lookahead?.type === TokenTypes.NOT_EQUALS) {
-    while (state.lookahead !== null && (state.lookahead.type === TokenTypes.EQUALS || state.lookahead.type === TokenTypes.NOT_EQUALS)) {
-      const operator = eat(state.lookahead.type, state).value;
-      left = { type: "BinaryExpression", operator, left, right: valueRangeExpr(state) };
+    const operator = eat(state.lookahead.type, state).value;
+    const valueRanges: Array<AstNode> = [];
+    const vr = valueRangeExpr(state);
+    valueRanges.push(vr);
+    while (state.lookahead !== null && state.lookahead.type === TokenTypes.COMMA) {
+      eat(TokenTypes.COMMA, state).value;
+      const vr = valueRangeExpr(state);
+      valueRanges.push(vr);
     }
-    return left;
+    return { type: "ValueRanges", ranges: valueRanges };
   }
 
   throw new Error("Unexpected");
