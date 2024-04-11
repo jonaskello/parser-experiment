@@ -8,7 +8,10 @@ main();
 
 function main() {
   const propertyFilter = "size=1+2 & a!=3,1 | foo>55 | foo=1~5,10";
-  const propertyValues: Record<string, PropertyValue> = { size: { type: "integer", value: 12 } };
+  const propertyValues: Record<string, PropertyValue> = {
+    size: { type: "integer", value: 12 },
+    foo: { type: "integer", value: 11 },
+  };
   // const input = "size=1~2";
 
   printAllTokens(propertyFilter);
