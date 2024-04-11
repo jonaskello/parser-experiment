@@ -28,7 +28,6 @@ export type EqualsExpr = {
   readonly type: "EqualsExpr";
   readonly leftValue: AstNode;
   readonly operationType: EqualsOperationType;
-  // readonly rightValueRanges: ReadonlyArray<ValueRangeExpr>;
   readonly rightValueRanges: ReadonlyArray<AstNode>;
 };
 
