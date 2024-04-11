@@ -57,7 +57,7 @@ function comparisonExpr(state: ParseState): AstNode {
     const valueRanges: Array<AstNode> = [];
     const vr = valueRangeExpr(state);
     valueRanges.push(vr);
-    while (state.lookahead !== null && state.lookahead.type === TokenTypes.COMMA) {
+    while (state.lookahead !== null && (state.lookahead.type as ",") === TokenTypes.COMMA) {
       eat(TokenTypes.COMMA, state).value;
       const vr = valueRangeExpr(state);
       valueRanges.push(vr);

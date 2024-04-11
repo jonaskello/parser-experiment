@@ -1,5 +1,32 @@
+/*
+
+// ---- CHARACTERS ----
+
+letter
+  = [a-z]i
+digit
+	 = [0-9]
+unescaped
+  = [^\0-\x1F\x22\x5C]
+identletter
+  = letter / "." / "_"
+
+// ----TOKENS ----
+
+ident
+  = $(identletter (identletter / digit)*)
+propval
+  = $('"' unescaped* '"')
+  / $("-"? digit+ ("." digit+)? (":" letter+)?)
+
+// optional whitespace
+_  = [ ]*
+
+
+*/
+
 export type Token = {
-  type: string;
+  type: (typeof TokenTypes)[keyof typeof TokenTypes];
   value: string;
 };
 
@@ -22,7 +49,7 @@ export const TokenTypes = {
   TILDE: "~",
   NUMBER: "NUMBER",
   IDENTIFIER: "IDENTIFIER",
-};
+} as const;
 
 const isNumeric = (c: string) => !isNaN(parseInt(c));
 const isLetter = (c: string) => {
