@@ -206,7 +206,8 @@ function evaluatePropertyValueExpr(e: Ast.PropertyValueExpr, properties: Propert
 function _isMissingIdent(e: Ast.PropertyValueExpr, properties: PropertyValueSet): boolean {
   // If expression is an missing identifier it should match anything
   if (e.type === "IdentifierExpr") {
-    if (!PropertyValueSet.hasProperty(e.name, properties)) {
+    // if (!PropertyValueSet.hasProperty(e.name, properties)) {
+    if (properties[e.name] === undefined) {
       return true;
     }
   }
