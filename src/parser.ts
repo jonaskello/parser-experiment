@@ -1,4 +1,4 @@
-import { AstNode, ComparisionOperator, Identifier, MathOperator, Numeric, UnaryExpression } from "./ast";
+import { AstNode, BinaryExpression, ComparisionOperator, Identifier, MathOperator, Numeric, UnaryExpression } from "./ast";
 import { Token, TokenTypes, TokenizeState, getNextToken } from "./tokenizer";
 
 type ParseState = { input: string; lookahead: Token | null; tokenizeState: TokenizeState };
@@ -89,7 +89,7 @@ function addExpr(state: ParseState): AstNode {
   return left;
 }
 
-function multiplyExpr(state: ParseState): AstNode {
+function multiplyExpr(state: ParseState): UnaryExpression | BinaryExpression | Identifier | Numeric {
   // MultiplyExpr =	( (UnaryExpr _ ("*" / "/") _ MultiplyExpr)  ) / UnaryExpr
   let left = unaryExpr(state);
   if (state.lookahead?.type === TokenTypes.MULTIPLICATION || state.lookahead?.type === TokenTypes.DIVISION) {
