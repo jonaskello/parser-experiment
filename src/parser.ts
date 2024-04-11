@@ -60,7 +60,7 @@ function comparisonExpr(state: ParseState): AstNode {
 
   // (_ ("=" / "!=") _ ValueRangeExpr ("," ValueRangeExpr)*) )
   if (state.lookahead?.type === TokenTypes.EQUALS || state.lookahead?.type === TokenTypes.NOT_EQUALS) {
-    const operator = eat(state.lookahead.type, state).value;
+    eat(state.lookahead.type, state).value;
     const valueRanges: Array<AstNode> = [];
     const vr = valueRangeExpr(state);
     valueRanges.push(vr);
