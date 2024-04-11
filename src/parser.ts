@@ -76,7 +76,7 @@ function valueExpr(state: ParseState): Identifier | Number {
   return { type: "Number", value: Number(token.value) };
 }
 
-function binaryExpression(state: ParseState, leftRule, rightRule, operatorType1, operatorType2?): BinaryExpression {
+function binaryExpression(state: ParseState, leftRule, rightRule, operatorType1: string, operatorType2?: string): BinaryExpression {
   let left = leftRule(state);
 
   while (state.lookahead !== null && (state.lookahead.type === operatorType1 || state.lookahead.type === operatorType2)) {
