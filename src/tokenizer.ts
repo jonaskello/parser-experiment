@@ -7,6 +7,7 @@ export const TokenTypes = {
   OR: "|",
   AND: "&",
   EQUALS: "=",
+  NOT_EQUALS: "!=",
   GREATER_EQUALS: ">=",
   LESS_EQUALS: "<=",
   GREATER: ">",
@@ -79,6 +80,13 @@ export function getNextToken(input: string, state: TokenizeState): Token | null 
           return { type: TokenTypes.LESS_EQUALS, value: c };
         }
         return { type: TokenTypes.LESS, value: "<=" };
+      }
+      case "!": {
+        if (input[state.cursor] === "=") {
+          state.cursor++;
+          return { type: TokenTypes.NOT_EQUALS, value: "!=" };
+        }
+        throw new SyntaxError(`Unexpected token: "${c}"`);
       }
       case "+":
         return { type: TokenTypes.ADDITION, value: c };

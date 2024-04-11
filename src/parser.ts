@@ -41,7 +41,38 @@ function expr(state: ParseState) {
 
 function comparisonExpr(state: ParseState): AstNode {
   // ComparisonExpr = ( AddExpr ( (_ (">=" / "<=" / ">" / "<") _ AddExpr) / (_ ("=" / "!=") _ ValueRangeExpr ("," ValueRangeExpr)*) ) )
-  return binaryExpression(state, addExpr, valueRangeExpr, TokenTypes.EQUALS, TokenTypes.GREATER);
+  // return binaryExpression(state, addExpr, valueRangeExpr, TokenTypes.EQUALS, TokenTypes.GREATER);
+
+  let left = addExpr(state);
+
+  if (state.lookahead?.type === TokenTypes.EQUALS || state.lookahead?.type === TokenTypes.NOT_EQUALS) {
+    while (state.lookahead !== null && (state.lookahead.type === TokenTypes.EQUALS || state.lookahead.type === TokenTypes.NOT_EQUALS)) {
+      const operator = eat(state.lookahead.type, state).value;
+      left = { type: "BinaryExpression", operator, left, right: valueRangeExpr(state) };
+    }
+    return left;
+  }
+
+  if (
+    state.lookahead?.type === TokenTypes.GREATER ||
+    state.lookahead?.type === TokenTypes.LESS ||
+    state.lookahead?.type === TokenTypes.LESS_EQUALS ||
+    state.lookahead?.type === TokenTypes.LESS_EQUALS
+  ) {
+    while (
+      state.lookahead !== null &&
+      (state.lookahead.type === TokenTypes.GREATER ||
+        state.lookahead.type === TokenTypes.LESS ||
+        state.lookahead.type === TokenTypes.LESS_EQUALS ||
+        state.lookahead.type === TokenTypes.LESS_EQUALS)
+    ) {
+      const operator = eat(state.lookahead.type, state).value;
+      left = { type: "BinaryExpression", operator, left, right: valueRangeExpr(state) };
+    }
+    return left;
+  }
+
+  throw new Error("Unexected");
 }
 
 function valueRangeExpr(state: ParseState): AstNode {
@@ -81,12 +112,10 @@ function valueExpr(state: ParseState): Identifier | Number {
 
 function binaryExpression(state: ParseState, leftRule: RuleFn, rightRule: RuleFn, operatorType1: string, operatorType2?: string): AstNode {
   let left = leftRule(state);
-
   while (state.lookahead !== null && (state.lookahead.type === operatorType1 || state.lookahead.type === operatorType2)) {
     const operator = eat(state.lookahead.type, state).value;
     left = { type: "BinaryExpression", operator, left, right: rightRule(state) };
   }
-
   return left;
 }
 
