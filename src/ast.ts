@@ -6,6 +6,7 @@ export type AstNode =
   | ComparisonExpr
   | EqualsExpr
   | EmptyExpr
+  | NullExpr
   | UnaryExpr
   | IdentifierExpr
   | ValueExpr
@@ -17,10 +18,13 @@ export type AstNode =
 // Expressions that result in a boolean
 export type BooleanExpr = OrExpr | AndExpr | EqualsExpr | ComparisonExpr | EmptyExpr;
 
-// export type PropertyValueExpr = IdentifierExpr | ValueExpr | NullExpr | AddExpr | MulExpr | UnaryExpr;
+export type PropertyValueExpr = IdentifierExpr | ValueExpr | NullExpr | AddExpr | MulExpr | UnaryExpr;
 
 export type EmptyExpr = {
   readonly type: "EmptyExpr";
+};
+export type NullExpr = {
+  readonly type: "NullExpr";
 };
 
 export type EqualsExpr = {
