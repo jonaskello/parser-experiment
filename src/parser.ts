@@ -15,10 +15,10 @@ export function parse(input: string): Expr {
   return orExpr(state);
 }
 
-function orExpr(state: ParseState): Expr {
+function orExpr(state: ParseState): BooleanExpr {
   // OrExpr = AndExpr (_ "|" _ AndExpr)*
   let left = andExpr(state);
-  const children: Array<Expr> = [left];
+  const children: Array<BooleanExpr> = [left];
   while (state.lookahead !== null && state.lookahead.type === TokenTypes.OR) {
     eat(state.lookahead.type, state).value;
     const e = andExpr(state);
@@ -27,10 +27,10 @@ function orExpr(state: ParseState): Expr {
   return { type: "OrExpr", children };
 }
 
-function andExpr(state: ParseState): Expr {
+function andExpr(state: ParseState): BooleanExpr {
   // AndExpr = Expr (_ "&" _ Expr)*
   let left = expr(state);
-  const children: Array<Expr> = [left];
+  const children: Array<BooleanExpr> = [left];
   while (state.lookahead !== null && state.lookahead.type === TokenTypes.AND) {
     eat(state.lookahead.type, state).value;
     const e = expr(state);
@@ -39,7 +39,7 @@ function andExpr(state: ParseState): Expr {
   return { type: "AndExpr", children };
 }
 
-function expr(state: ParseState) {
+function expr(state: ParseState): BooleanExpr {
   // Expr  = ("(" OrExpr ")")  /	ComparisonExpr
   if (state.lookahead?.type === TokenTypes.PARAN_LEFT) {
     eat(TokenTypes.PARAN_LEFT, state);
@@ -50,7 +50,7 @@ function expr(state: ParseState) {
   return comparisonExpr(state);
 }
 
-function comparisonExpr(state: ParseState): Expr {
+function comparisonExpr(state: ParseState): BooleanExpr {
   // ComparisonExpr = AddExpr ( (_ (">=" / "<=" / ">" / "<") _ AddExpr) / (_ ("=" / "!=") _ ValueRangeExpr ("," ValueRangeExpr)*) )
 
   let left = addExpr(state);
