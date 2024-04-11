@@ -79,7 +79,6 @@ function UnaryExpr(state: ParseState) {
 
 function ValueExpr(state: ParseState) {
   // ValueExpr  = "null" / ident (":" ident)? / propval
-
   if (state.lookahead?.type === TokenTypes.IDENTIFIER) {
     const token = eat(TokenTypes.IDENTIFIER, state);
     return { type: "Identifier", name: token.value, value: token.value };
@@ -87,13 +86,6 @@ function ValueExpr(state: ParseState) {
 
   const token = eat(TokenTypes.NUMBER, state);
   return { type: "Number", value: Number(token.value) };
-}
-
-function ParenthesizedExpression(state: ParseState) {
-  eat(TokenTypes.PARENTHESIS_LEFT, state);
-  const expression = OrExpr(state);
-  eat(TokenTypes.PARENTHESIS_RIGHT, state);
-  return expression;
 }
 
 function BinaryExpression(state: ParseState, leftRule, rightRule, operatorType1, operatorType2?) {
@@ -105,35 +97,6 @@ function BinaryExpression(state: ParseState, leftRule, rightRule, operatorType1,
   }
 
   return left;
-}
-
-function Primary(state: ParseState) {
-  if (state.lookahead !== null) {
-    if (state.lookahead.type === TokenTypes.PARENTHESIS_LEFT) {
-      return ParenthesizedExpression(state);
-    }
-
-    if (state.lookahead.type === TokenTypes.SUBTRACTION) {
-      return UnaryExpression(state);
-    }
-
-    if (state.lookahead.type === TokenTypes.IDENTIFIER) {
-      return IdentifierExpression(state);
-    }
-  }
-
-  const token = eat(TokenTypes.NUMBER, state);
-  return { type: "Number", value: Number(token.value) };
-}
-
-function UnaryExpression(state: ParseState) {
-  eat(TokenTypes.SUBTRACTION, state);
-  return { type: "UnaryExpression", value: Expr(state) };
-}
-
-function IdentifierExpression(state: ParseState) {
-  const token = eat(TokenTypes.IDENTIFIER, state);
-  return { type: "Identifier", name: token.value, value: token.value };
 }
 
 function eat(tokenType: string, state: ParseState) {
