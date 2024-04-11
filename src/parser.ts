@@ -50,9 +50,8 @@ function comparisonExpr(state: ParseState): AstNode {
   // ( (_ (">=" / "<=" / ">" / "<") _ AddExpr)
   const op = state.lookahead?.type;
   if (op === TokenTypes.GREATER_EQUALS || op === TokenTypes.LESS_EQUALS || op === TokenTypes.GREATER || op === TokenTypes.LESS) {
-    const operator = eat(op, state).value as ComparisionOperator;
-    const operationType: ComparisonOperationType =
-      operator === ">=" ? "greaterOrEqual" : operator === "<=" ? "lessOrEqual" : operator === ">" ? "greater" : "less";
+    eat(op, state).value as ComparisionOperator;
+    const operationType: ComparisonOperationType = op === ">=" ? "greaterOrEqual" : op === "<=" ? "lessOrEqual" : op === ">" ? "greater" : "less";
     left = { type: "ComparisonExpr", operationType, leftValue: left, rightValue: addExpr(state) };
     return left;
   }
