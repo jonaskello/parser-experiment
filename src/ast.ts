@@ -8,9 +8,6 @@ export type AstNode = OrExpr | AndExpr | AddExpr | MulExpr | ComparisonExpr | Un
 
 // export type PropertyValueExpr = IdentifierExpr | ValueExpr | NullExpr | AddExpr | MulExpr | UnaryExpr;
 
-// export type MathOperator = "+" | "-" | "/" | "*";
-// export type ComparisionOperator = "=" | ">" | ">=" | "<" | "<=";
-// export type LogicOperator = "&" | "|";
 export interface AddExpr {
   readonly type: "AddExpr";
   readonly left: AstNode;
