@@ -1,4 +1,4 @@
-import { AstNode, Identifier, Numeric, UnaryExpression } from "./ast";
+import { AstNode, ComparisionOperator, Identifier, MathOperator, Numeric, UnaryExpression } from "./ast";
 import { Token, TokenTypes, TokenizeState, getNextToken } from "./tokenizer";
 
 type ParseState = { input: string; lookahead: Token | null; tokenizeState: TokenizeState };
@@ -46,7 +46,7 @@ function comparisonExpr(state: ParseState): AstNode {
     state.lookahead?.type === TokenTypes.GREATER ||
     state.lookahead?.type === TokenTypes.LESS
   ) {
-    const operator = eat(state.lookahead.type, state).value;
+    const operator = eat(state.lookahead.type, state).value as ComparisionOperator;
     left = { type: "BinaryExpression", operator, left, right: addExpr(state) };
     return left;
   }
@@ -106,7 +106,7 @@ function valueExpr(state: ParseState): Identifier | Numeric {
 function binaryExpression(state: ParseState, leftRule: RuleFn, rightRule: RuleFn, operatorType1: string, operatorType2?: string): AstNode {
   let left = leftRule(state);
   while (state.lookahead !== null && (state.lookahead.type === operatorType1 || state.lookahead.type === operatorType2)) {
-    const operator = eat(state.lookahead.type, state).value;
+    const operator = eat(state.lookahead.type, state).value as MathOperator | ComparisionOperator;
     left = { type: "BinaryExpression", operator, left, right: rightRule(state) };
   }
   return left;
