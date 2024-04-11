@@ -8,7 +8,7 @@ export type AstNode =
   | EmptyExpr
   | UnaryExpr
   | IdentifierExpr
-  | Numeric
+  | ValueExpr
   | ValueRangeExpr;
 
 // // All expression
@@ -64,9 +64,9 @@ export type ComparisonExpr = {
 };
 export type ComparisonOperationType = "greater" | "less" | "greaterOrEqual" | "lessOrEqual";
 export type ValueRangeExpr = { type: "ValueRangeExpr"; min: AstNode; max: AstNode };
-export type UnaryExpr = { type: "UnaryExpr"; value: IdentifierExpr | Numeric };
+export type UnaryExpr = { type: "UnaryExpr"; value: IdentifierExpr | ValueExpr };
 export type IdentifierExpr = { type: "IdentifierExpr"; name: string; value: string };
-export type Numeric = { type: "Numeric"; value: number };
+export type ValueExpr = { type: "ValueExpr"; value: number };
 
 /*
 type ParserCallbacks = {

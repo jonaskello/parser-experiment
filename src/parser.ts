@@ -1,4 +1,4 @@
-import { AstNode, ComparisonOperationType, EqualsOperationType, IdentifierExpr, MulExpr, Numeric, UnaryExpr } from "./ast";
+import { AstNode, ComparisonOperationType, EqualsOperationType, IdentifierExpr, MulExpr, ValueExpr, UnaryExpr } from "./ast";
 import { Token, TokenTypes, TokenizeState, getNextToken } from "./tokenizer";
 
 type ParseState = { input: string; lookahead: Token | null; tokenizeState: TokenizeState };
@@ -100,7 +100,7 @@ function addExpr(state: ParseState): AstNode {
   return left;
 }
 
-function multiplyExpr(state: ParseState): UnaryExpr | MulExpr | IdentifierExpr | Numeric {
+function multiplyExpr(state: ParseState): UnaryExpr | MulExpr | IdentifierExpr | ValueExpr {
   // MultiplyExpr =	( (UnaryExpr _ ("*" / "/") _ MultiplyExpr)  ) / UnaryExpr
   let left = unaryExpr(state);
   const op = state.lookahead?.type;
@@ -112,7 +112,7 @@ function multiplyExpr(state: ParseState): UnaryExpr | MulExpr | IdentifierExpr |
   return left;
 }
 
-function unaryExpr(state: ParseState): UnaryExpr | IdentifierExpr | Numeric {
+function unaryExpr(state: ParseState): UnaryExpr | IdentifierExpr | ValueExpr {
   // UnaryExpr  = ( ("-" ValueExpr) ) / ValueExpr;
   if (state.lookahead?.type === TokenTypes.MINUS) {
     eat(TokenTypes.MINUS, state);
@@ -121,7 +121,7 @@ function unaryExpr(state: ParseState): UnaryExpr | IdentifierExpr | Numeric {
   return valueExpr(state);
 }
 
-function valueExpr(state: ParseState): IdentifierExpr | Numeric {
+function valueExpr(state: ParseState): IdentifierExpr | ValueExpr {
   // ValueExpr  = "null" / ident (":" ident)? / propval
   if (state.lookahead?.type === TokenTypes.IDENTIFIER) {
     const token = eat(TokenTypes.IDENTIFIER, state);
@@ -129,7 +129,7 @@ function valueExpr(state: ParseState): IdentifierExpr | Numeric {
   }
 
   const token = eat(TokenTypes.NUMBER, state);
-  return { type: "Numeric", value: Number(token.value) };
+  return { type: "ValueExpr", value: Number(token.value) };
 }
 
 function eat(tokenType: string, state: ParseState): Token {
