@@ -24,19 +24,76 @@ export function parse(input: string) {
 
   state.lookahead = getNextToken(input, state.tokenizeState);
 
-  return Expression(state);
+  return OrExpr(state);
 }
 
-function Expression(state: ParseState) {
-  return BinaryExpression(state, Term, Term, TokenTypes.ADDITION, TokenTypes.SUBTRACTION);
+function OrExpr(state: ParseState) {
+  // OrExpr = AndExpr (_ "|" _ i:AndExpr)*
+  return BinaryExpression(state, AndExpr, AndExpr, TokenTypes.OR);
 }
 
-function Term(state: ParseState) {
-  return BinaryExpression(state, Factor, Factor, TokenTypes.MULTIPLICATION, TokenTypes.DIVISION);
+function AndExpr(state: ParseState) {
+  // AndExpr = Expr (_ "&" _ Expr)*
+  return BinaryExpression(state, Expr, Expr, TokenTypes.AND);
 }
 
-function Factor(state: ParseState) {
-  return BinaryExpression(state, Primary, Factor, TokenTypes.EXPONENTIATION);
+function Expr(state: ParseState) {
+  // Expr  = ("(" OrExpr ")")  /	ComparisonExpr
+  if (state.lookahead?.type === TokenTypes.PARENTHESIS_LEFT) {
+    eat(TokenTypes.PARENTHESIS_LEFT, state);
+    const expression = OrExpr(state);
+    eat(TokenTypes.PARENTHESIS_RIGHT, state);
+    return expression;
+  }
+  return ComparisonExpr(state);
+}
+
+function ComparisonExpr(state: ParseState) {
+  // ComparisonExpr = ( AddExpr ( (_ (">=" / "<=" / ">" / "<") _ AddExpr) / (_ ("=" / "!=") _ ValueRangeExpr ("," ValueRangeExpr)*) ) )
+  return BinaryExpression(state, AddExpr, ValueRangeExpr, TokenTypes.EQUALS);
+}
+
+function ValueRangeExpr(state: ParseState) {
+  // ValueRangeExpr  = AddExpr (_ "~" _ AddExpr)?
+  return AddExpr(state);
+}
+
+function AddExpr(state: ParseState) {
+  // AddExpr  =	(  (MultiplyExpr _ ("+" / "-") _ AddExpr) ) / MultiplyExpr
+  return BinaryExpression(state, MultiplyExpr, AddExpr, TokenTypes.ADDITION, TokenTypes.SUBTRACTION);
+}
+
+function MultiplyExpr(state: ParseState) {
+  // MultiplyExpr  =	( (UnaryExpr _ ("*" / "/") _ MultiplyExpr)  ) / UnaryExpr
+  return BinaryExpression(state, UnaryExpr, MultiplyExpr, TokenTypes.MULTIPLICATION, TokenTypes.DIVISION);
+}
+
+function UnaryExpr(state: ParseState) {
+  // UnaryExpr  = ( ("-" ValueExpr) ) / ValueExpr;
+  if (state.lookahead?.type === TokenTypes.SUBTRACTION) {
+    eat(TokenTypes.SUBTRACTION, state);
+    return { type: "UnaryExpression", value: ValueExpr(state) };
+  }
+  return ValueExpr(state);
+}
+
+function ValueExpr(state: ParseState) {
+  // ValueExpr  = "null" / ident (":" ident)? / propval
+
+  if (state.lookahead?.type === TokenTypes.IDENTIFIER) {
+    const token = eat(TokenTypes.IDENTIFIER, state);
+    return { type: "Identifier", name: token.value, value: token.value };
+  }
+
+  const token = eat(TokenTypes.NUMBER, state);
+  return { type: "Number", value: Number(token.value) };
+}
+
+function ParenthesizedExpression(state: ParseState) {
+  eat(TokenTypes.PARENTHESIS_LEFT, state);
+  const expression = OrExpr(state);
+  eat(TokenTypes.PARENTHESIS_RIGHT, state);
+  return expression;
 }
 
 function BinaryExpression(state: ParseState, leftRule, rightRule, operatorType1, operatorType2?) {
@@ -69,17 +126,9 @@ function Primary(state: ParseState) {
   return { type: "Number", value: Number(token.value) };
 }
 
-function ParenthesizedExpression(state: ParseState) {
-  eat(TokenTypes.PARENTHESIS_LEFT, state);
-  const expression = Expression(state);
-  eat(TokenTypes.PARENTHESIS_RIGHT, state);
-
-  return expression;
-}
-
 function UnaryExpression(state: ParseState) {
   eat(TokenTypes.SUBTRACTION, state);
-  return { type: "UnaryExpression", value: Factor(state) };
+  return { type: "UnaryExpression", value: Expr(state) };
 }
 
 function IdentifierExpression(state: ParseState) {

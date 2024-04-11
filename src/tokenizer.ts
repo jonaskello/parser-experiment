@@ -13,6 +13,10 @@ export const TokenTypes = {
   EXPONENTIATION: "^",
   PARENTHESIS_LEFT: "(",
   PARENTHESIS_RIGHT: ")",
+  //
+  OR: "|",
+  AND: "&",
+  EQUALS: "=",
 };
 
 const isNumeric = (c: string) => !isNaN(parseInt(c));
@@ -68,6 +72,13 @@ export function getNextToken(input: string, state: TokenizeState): Token | null 
         return { type: TokenTypes.PARENTHESIS_LEFT, value: c };
       case ")":
         return { type: TokenTypes.PARENTHESIS_RIGHT, value: c };
+      //
+      case "|":
+        return { type: TokenTypes.OR, value: c };
+      case "&":
+        return { type: TokenTypes.AND, value: c };
+      case "=":
+        return { type: TokenTypes.EQUALS, value: c };
       default:
         throw new SyntaxError(`Unexpected token: "${c}"`);
     }
