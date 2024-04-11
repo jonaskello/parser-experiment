@@ -41,8 +41,8 @@ export function getNextToken(
       state.cursor++;
     }
   }
-  console.log("state", state);
 
+  // Get next token
   if (isNumeric(input[state.cursor])) {
     let number = input[state.cursor++];
     while (state.cursor < input.length && isNumeric(input[state.cursor])) {
