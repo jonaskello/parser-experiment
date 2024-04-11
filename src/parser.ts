@@ -27,7 +27,7 @@ export function parse(input: string) {
   return Expression(state);
 }
 
-function eat(tokenType, state: ParseState) {
+function eat(tokenType: string, state: ParseState) {
   const token = state.lookahead;
 
   if (token == null) {
