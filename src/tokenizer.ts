@@ -30,6 +30,9 @@ export function getNextToken(
   input: string,
   state: TokenizeState
 ): Token | null {
+  if (state.cursor > input.length - 1) {
+    return null;
+  }
   // Skip whitespace
   if (isWhitespace(input[state.cursor])) {
     console.log("whitespace");

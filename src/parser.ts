@@ -1,29 +1,35 @@
 import { Token, TokenTypes, TokenizeState, getNextToken } from "./tokenizer";
 
-let lookahead: Token;
-let tokenIndex = 0;
+type ParseState = {
+  input: string;
+  tokenizeState: TokenizeState;
+};
+
+let lookahead: Token | null;
+// let tokenIndex = 0;
 
 export function parse(input: string) {
-  const tokens: Array<Token> = [];
-  const state: TokenizeState = { cursor: 0 };
-  while (state.cursor < input.length) {
-    console.log("state.cursor", state.cursor);
-    const t = getNextToken(input, state);
-    console.log("t", t);
-    if (t === null) {
-      break;
-    }
-    tokens.push(t);
-  }
+  // const tokens: Array<Token> = [];
+  const state: ParseState = { tokenizeState: { cursor: 0 }, input };
+  // while (state.cursor < input.length) {
+  //   console.log("state.cursor", state.cursor);
+  //   const t = getNextToken(input, state);
+  //   console.log("t", t);
+  //   if (t === null) {
+  //     break;
+  //   }
+  //   tokens.push(t);
+  // }
 
-  console.log("tokens", tokens);
+  // console.log("tokens", tokens);
 
-  lookahead = tokens[tokenIndex++];
+  // lookahead = tokens[tokenIndex++];
+  lookahead = getNextToken(input, state.tokenizeState);
 
-  return Expression(tokens);
+  return Expression(state);
 }
 
-function eat(tokenType, tokens) {
+function eat(tokenType, state: ParseState) {
   const token = lookahead;
 
   if (token == null) {
@@ -36,39 +42,41 @@ function eat(tokenType, tokens) {
     );
   }
 
-  lookahead = tokens[tokenIndex++];
+  // lookahead = tokens[tokenIndex++];
+  lookahead = getNextToken(state.input, state.tokenizeState);
+  console.log("lookahead", lookahead);
 
   return token;
 }
 
 function BinaryExpression(
-  tokens: ReadonlyArray<Token>,
+  state: ParseState,
   leftRule,
   rightRule,
   operatorType1,
   operatorType2?
 ) {
-  let left = leftRule(tokens);
+  let left = leftRule(state);
 
   while (
     lookahead &&
     (lookahead.type === operatorType1 || lookahead.type === operatorType2)
   ) {
-    const operator = eat(lookahead.type, tokens).value;
+    const operator = eat(lookahead.type, state).value;
     left = {
       type: "BinaryExpression",
       operator,
       left,
-      right: rightRule(tokens),
+      right: rightRule(state),
     };
   }
 
   return left;
 }
 
-function Expression(tokens: ReadonlyArray<Token>) {
+function Expression(state: ParseState) {
   return BinaryExpression(
-    tokens,
+    state,
     Term,
     Term,
     TokenTypes.ADDITION,
@@ -76,9 +84,9 @@ function Expression(tokens: ReadonlyArray<Token>) {
   );
 }
 
-function Term(tokens: ReadonlyArray<Token>) {
+function Term(state: ParseState) {
   return BinaryExpression(
-    tokens,
+    state,
     Factor,
     Factor,
     TokenTypes.MULTIPLICATION,
@@ -86,51 +94,51 @@ function Term(tokens: ReadonlyArray<Token>) {
   );
 }
 
-function Factor(tokens: ReadonlyArray<Token>) {
-  return BinaryExpression(tokens, Primary, Factor, TokenTypes.EXPONENTIATION);
+function Factor(state: ParseState) {
+  return BinaryExpression(state, Primary, Factor, TokenTypes.EXPONENTIATION);
 }
 
-function Primary(tokens: ReadonlyArray<Token>) {
+function Primary(state: ParseState) {
   if (lookahead?.type === TokenTypes.PARENTHESIS_LEFT) {
-    return ParenthesizedExpression(tokens);
+    return ParenthesizedExpression(state);
   }
 
   if (lookahead?.type === TokenTypes.SUBTRACTION) {
-    return UnaryExpression(tokens);
+    return UnaryExpression(state);
   }
 
   if (lookahead?.type === TokenTypes.IDENTIFIER) {
-    return FunctionExpression(tokens);
+    return FunctionExpression(state);
   }
 
-  const token = eat(TokenTypes.NUMBER, tokens);
+  const token = eat(TokenTypes.NUMBER, state);
   return {
     type: "Number",
     value: Number(token.value),
   };
 }
 
-function ParenthesizedExpression(tokens: ReadonlyArray<Token>) {
-  eat(TokenTypes.PARENTHESIS_LEFT, tokens);
-  const expression = Expression(tokens);
-  eat(TokenTypes.PARENTHESIS_RIGHT, tokens);
+function ParenthesizedExpression(state: ParseState) {
+  eat(TokenTypes.PARENTHESIS_LEFT, state);
+  const expression = Expression(state);
+  eat(TokenTypes.PARENTHESIS_RIGHT, state);
 
   return expression;
 }
 
-function UnaryExpression(tokens: ReadonlyArray<Token>) {
-  eat(TokenTypes.SUBTRACTION, tokens);
+function UnaryExpression(state: ParseState) {
+  eat(TokenTypes.SUBTRACTION, state);
   return {
     type: "UnaryExpression",
-    value: Factor(tokens),
+    value: Factor(state),
   };
 }
 
-function FunctionExpression(tokens: ReadonlyArray<Token>) {
-  const token = eat(TokenTypes.IDENTIFIER, tokens);
+function FunctionExpression(state: ParseState) {
+  const token = eat(TokenTypes.IDENTIFIER, state);
   return {
     type: "Function",
     name: token.value,
-    value: ParenthesizedExpression(tokens),
+    value: ParenthesizedExpression(state),
   };
 }
