@@ -82,7 +82,7 @@ function Primary(state: ParseState) {
     }
 
     if (state.lookahead.type === TokenTypes.IDENTIFIER) {
-      return FunctionExpression(state);
+      return IdentifierExpression(state);
     }
   }
 
@@ -109,11 +109,11 @@ function UnaryExpression(state: ParseState) {
   };
 }
 
-function FunctionExpression(state: ParseState) {
+function IdentifierExpression(state: ParseState) {
   const token = eat(TokenTypes.IDENTIFIER, state);
   return {
-    type: "Function",
+    type: "Identifier",
     name: token.value,
-    value: ParenthesizedExpression(state),
+    value: token.value,
   };
 }
