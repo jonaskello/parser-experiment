@@ -91,7 +91,13 @@ function addExpr(state: ParseState): AstNode {
 
 function multiplyExpr(state: ParseState): AstNode {
   // MultiplyExpr =	( (UnaryExpr _ ("*" / "/") _ MultiplyExpr)  ) / UnaryExpr
-  return binaryExpression(state, unaryExpr, multiplyExpr, TokenTypes.MULTIPLICATION, TokenTypes.DIVISION);
+  let left = unaryExpr(state);
+  if (state.lookahead?.type === TokenTypes.MULTIPLICATION || state.lookahead?.type === TokenTypes.DIVISION) {
+    eat(state.lookahead?.type, state);
+    const right = multiplyExpr(state);
+    return { type: "BinaryExpression", operator: state.lookahead?.type as MathOperator, left, right };
+  }
+  return left;
 }
 
 function unaryExpr(state: ParseState): UnaryExpression | Identifier | Numeric {
