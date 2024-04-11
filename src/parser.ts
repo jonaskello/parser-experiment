@@ -25,10 +25,10 @@ function andExpr(state: ParseState): AstNode {
 
 function expr(state: ParseState) {
   // Expr  = ("(" OrExpr ")")  /	ComparisonExpr
-  if (state.lookahead?.type === TokenTypes.PARENTHESIS_LEFT) {
-    eat(TokenTypes.PARENTHESIS_LEFT, state);
+  if (state.lookahead?.type === TokenTypes.PARAN_LEFT) {
+    eat(TokenTypes.PARAN_LEFT, state);
     const expression = orExpr(state);
-    eat(TokenTypes.PARENTHESIS_RIGHT, state);
+    eat(TokenTypes.PARAN_RIGHT, state);
     return expression;
   }
   return comparisonExpr(state);
@@ -81,7 +81,7 @@ function valueRangeExpr(state: ParseState): AstNode {
 function addExpr(state: ParseState): AstNode {
   // AddExpr =	( (MultiplyExpr _ ("+" / "-") _ AddExpr) ) / MultiplyExpr
   let left = multiplyExpr(state);
-  if (state.lookahead?.type === TokenTypes.ADDITION || state.lookahead?.type === TokenTypes.SUBTRACTION) {
+  if (state.lookahead?.type === TokenTypes.PLUS || state.lookahead?.type === TokenTypes.MINUS) {
     eat(state.lookahead?.type, state);
     const right = addExpr(state);
     return { type: "BinaryExpression", operator: state.lookahead?.type as MathOperator, left, right };
@@ -92,7 +92,7 @@ function addExpr(state: ParseState): AstNode {
 function multiplyExpr(state: ParseState): UnaryExpression | BinaryExpression | Identifier | Numeric {
   // MultiplyExpr =	( (UnaryExpr _ ("*" / "/") _ MultiplyExpr)  ) / UnaryExpr
   let left = unaryExpr(state);
-  if (state.lookahead?.type === TokenTypes.MULTIPLICATION || state.lookahead?.type === TokenTypes.DIVISION) {
+  if (state.lookahead?.type === TokenTypes.STAR || state.lookahead?.type === TokenTypes.DIVIDE) {
     eat(state.lookahead?.type, state);
     const right = multiplyExpr(state);
     return { type: "BinaryExpression", operator: state.lookahead?.type as MathOperator, left, right };
@@ -102,8 +102,8 @@ function multiplyExpr(state: ParseState): UnaryExpression | BinaryExpression | I
 
 function unaryExpr(state: ParseState): UnaryExpression | Identifier | Numeric {
   // UnaryExpr  = ( ("-" ValueExpr) ) / ValueExpr;
-  if (state.lookahead?.type === TokenTypes.SUBTRACTION) {
-    eat(TokenTypes.SUBTRACTION, state);
+  if (state.lookahead?.type === TokenTypes.MINUS) {
+    eat(TokenTypes.MINUS, state);
     return { type: "UnaryExpression", value: valueExpr(state) };
   }
   return valueExpr(state);

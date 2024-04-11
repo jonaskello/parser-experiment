@@ -39,12 +39,12 @@ export const TokenTypes = {
   LESS_EQUALS: "<=",
   GREATER: ">",
   LESS: "<",
-  ADDITION: "+",
-  SUBTRACTION: "-",
-  MULTIPLICATION: "*",
-  DIVISION: "/",
-  PARENTHESIS_LEFT: "(",
-  PARENTHESIS_RIGHT: ")",
+  PLUS: "+",
+  MINUS: "-",
+  STAR: "*",
+  DIVIDE: "/",
+  PARAN_LEFT: "(",
+  PARAN_RIGHT: ")",
   COMMA: ",",
   TILDE: "~",
   NUMBER: "NUMBER",
@@ -119,17 +119,17 @@ export function getNextToken(input: string, state: TokenizeState): Token | null 
         throw new SyntaxError(`Unexpected token: "${c}"`);
       }
       case "+":
-        return { type: TokenTypes.ADDITION, value: c };
+        return { type: TokenTypes.PLUS, value: c };
       case "-":
-        return { type: TokenTypes.SUBTRACTION, value: c };
+        return { type: TokenTypes.MINUS, value: c };
       case "*":
-        return { type: TokenTypes.MULTIPLICATION, value: c };
+        return { type: TokenTypes.STAR, value: c };
       case "/":
-        return { type: TokenTypes.DIVISION, value: c };
+        return { type: TokenTypes.DIVIDE, value: c };
       case "(":
-        return { type: TokenTypes.PARENTHESIS_LEFT, value: c };
+        return { type: TokenTypes.PARAN_LEFT, value: c };
       case ")":
-        return { type: TokenTypes.PARENTHESIS_RIGHT, value: c };
+        return { type: TokenTypes.PARAN_RIGHT, value: c };
       case ",":
         return { type: TokenTypes.COMMA, value: c };
       case "~":
