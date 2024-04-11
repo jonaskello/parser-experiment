@@ -30,11 +30,13 @@ function orExpr(state: ParseState): Expr {
 function andExpr(state: ParseState): Expr {
   // AndExpr = Expr (_ "&" _ Expr)*
   let left = expr(state);
+  const children: Array<Expr> = [left];
   while (state.lookahead !== null && state.lookahead.type === TokenTypes.AND) {
     eat(state.lookahead.type, state).value;
-    left = { type: "AndExpr", left, right: expr(state) };
+    const e = expr(state);
+    children.push(e);
   }
-  return left;
+  return { type: "AndExpr", children };
 }
 
 function expr(state: ParseState) {
