@@ -1,5 +1,4 @@
 export type AstNode =
-  | BinaryExpression
   | OrExpression
   | AndExpression
   | AddExpr
@@ -14,12 +13,6 @@ export type AstNode =
 export type MathOperator = "+" | "-" | "/" | "*";
 export type ComparisionOperator = "=" | ">" | ">=" | "<" | "<=";
 export type LogicOperator = "&" | "|";
-export type BinaryExpression = {
-  type: "BinaryExpression";
-  operator: MathOperator | ComparisionOperator | LogicOperator;
-  left: AstNode;
-  right: AstNode;
-};
 export interface AddExpr {
   readonly type: "AddExpr";
   readonly left: AstNode;

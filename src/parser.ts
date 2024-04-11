@@ -1,15 +1,4 @@
-import {
-  AddExpr,
-  AstNode,
-  BinaryExpression,
-  ComparisionOperator,
-  ComparisonOperationType,
-  Identifier,
-  MathOperator,
-  MulExpr,
-  Numeric,
-  UnaryExpression,
-} from "./ast";
+import { AstNode, ComparisionOperator, ComparisonOperationType, Identifier, MathOperator, MulExpr, Numeric, UnaryExpression } from "./ast";
 import { Token, TokenTypes, TokenizeState, getNextToken } from "./tokenizer";
 
 type ParseState = { input: string; lookahead: Token | null; tokenizeState: TokenizeState };
