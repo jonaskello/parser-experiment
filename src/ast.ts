@@ -8,19 +8,19 @@ export type AstNode = OrExpr | AndExpr | AddExpr | MulExpr | ComparisonExpr | Un
 
 // export type PropertyValueExpr = IdentifierExpr | ValueExpr | NullExpr | AddExpr | MulExpr | UnaryExpr;
 
-export interface AddExpr {
+export type AddExpr = {
   readonly type: "AddExpr";
   readonly left: AstNode;
   readonly operationType: AddExprOperationType;
   readonly right: AstNode;
-}
+};
 export type AddExprOperationType = "add" | "subtract";
-export interface MulExpr {
+export type MulExpr = {
   readonly type: "MulExpr";
   readonly left: AstNode;
   readonly operationType: MulExprOperationType;
   readonly right: AstNode;
-}
+};
 export type MulExprOperationType = "multiply" | "divide";
 export type OrExpr = {
   type: "OrExpr";
