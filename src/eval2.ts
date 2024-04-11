@@ -1,16 +1,16 @@
 import * as Ast from "./ast";
 
+// export type PropertyValue = AmountPropertyValue | TextPropertyValue | IntegerPropertyValue;
+// export type AmountPropertyValue = { readonly type: "amount" };
+// export type TextPropertyValue = { readonly type: "text"; readonly value: string };
+// export type IntegerPropertyValue = { readonly type: "integer"; readonly value: number };
+
 export type PropertyType = "amount" | "text" | "integer";
 
-export type AmountPropertyValue = { readonly type: "amount" };
-export type TextPropertyValue = { readonly type: "text"; readonly value: string };
-export type IntegerPropertyValue = { readonly type: "integer"; readonly value: number };
-export type PropertyValue = AmountPropertyValue | TextPropertyValue | IntegerPropertyValue;
+export type Comparer = (left: Ast.PropertyValue, right: Ast.PropertyValue) => number;
+export const defaultComparer: Comparer = (left: Ast.PropertyValue, right: Ast.PropertyValue) => _compare(left, right);
 
-export type Comparer = (left: PropertyValue, right: PropertyValue) => number;
-export const defaultComparer: Comparer = (left: PropertyValue, right: PropertyValue) => _compare(left, right);
-
-export type PropertyValueSet = Record<string, PropertyValue>;
+export type PropertyValueSet = Record<string, Ast.PropertyValue>;
 
 export function evaluateAst(
   e: Ast.BooleanExpr,
@@ -101,7 +101,7 @@ export function evaluateAst(
   }
 }
 
-function evaluatePropertyValueExpr(e: Ast.PropertyValueExpr, properties: PropertyValueSet): PropertyValue | null {
+function evaluatePropertyValueExpr(e: Ast.PropertyValueExpr, properties: PropertyValueSet): Ast.PropertyValue | null {
   switch (e.type) {
     case "IdentifierExpr": {
       //   const pv = PropertyValueSet.get(e.name, properties);
@@ -201,7 +201,7 @@ function _isMissingIdent(e: Ast.PropertyValueExpr, properties: PropertyValueSet)
   return false;
 }
 
-export function equals(left: PropertyValue, right: PropertyValue, comparer: Comparer = defaultComparer): boolean {
+export function equals(left: Ast.PropertyValue, right: Ast.PropertyValue, comparer: Comparer = defaultComparer): boolean {
   if (left === undefined || right === undefined) {
     return false;
   }
@@ -211,7 +211,7 @@ export function equals(left: PropertyValue, right: PropertyValue, comparer: Comp
   return comparer(left, right) === 0;
 }
 
-export function lessThan(left: PropertyValue, right: PropertyValue, comparer: Comparer = defaultComparer): boolean {
+export function lessThan(left: Ast.PropertyValue, right: Ast.PropertyValue, comparer: Comparer = defaultComparer): boolean {
   if (left === undefined || right === undefined) {
     return false;
   }
@@ -221,7 +221,7 @@ export function lessThan(left: PropertyValue, right: PropertyValue, comparer: Co
   return comparer(left, right) < 0;
 }
 
-export function lessOrEqualTo(left: PropertyValue, right: PropertyValue, comparer: Comparer = defaultComparer): boolean {
+export function lessOrEqualTo(left: Ast.PropertyValue, right: Ast.PropertyValue, comparer: Comparer = defaultComparer): boolean {
   if (left === undefined || right === undefined) {
     return false;
   }
@@ -231,7 +231,7 @@ export function lessOrEqualTo(left: PropertyValue, right: PropertyValue, compare
   return comparer(left, right) <= 0;
 }
 
-export function greaterThan(left: PropertyValue, right: PropertyValue, comparer: Comparer = defaultComparer): boolean {
+export function greaterThan(left: Ast.PropertyValue, right: Ast.PropertyValue, comparer: Comparer = defaultComparer): boolean {
   if (left === undefined || right === undefined) {
     return false;
   }
@@ -241,7 +241,7 @@ export function greaterThan(left: PropertyValue, right: PropertyValue, comparer:
   return comparer(left, right) > 0;
 }
 
-export function greaterOrEqualTo(left: PropertyValue, right: PropertyValue, comparer: Comparer = defaultComparer): boolean {
+export function greaterOrEqualTo(left: Ast.PropertyValue, right: Ast.PropertyValue, comparer: Comparer = defaultComparer): boolean {
   if (left === undefined || right === undefined) {
     return false;
   }
@@ -251,7 +251,7 @@ export function greaterOrEqualTo(left: PropertyValue, right: PropertyValue, comp
   return comparer(left, right) >= 0;
 }
 
-function _compare(left: PropertyValue, right: PropertyValue): number {
+function _compare(left: Ast.PropertyValue, right: Ast.PropertyValue): number {
   switch (left.type) {
     case "integer":
       if (right.type === "integer") {
@@ -274,15 +274,15 @@ function _compare(left: PropertyValue, right: PropertyValue): number {
   }
 }
 
-export function fromInteger(integerValue: number): PropertyValue {
-  return { type: "integer", value: integerValue } as PropertyValue;
+export function fromInteger(integerValue: number): Ast.PropertyValue {
+  return { type: "integer", value: integerValue } as Ast.PropertyValue;
 }
 
-export function fromText(textValue: string): PropertyValue {
+export function fromText(textValue: string): Ast.PropertyValue {
   if (textValue === null) {
     throw new Error("value");
   }
-  return { type: "text", value: textValue } as PropertyValue;
+  return { type: "text", value: textValue } as Ast.PropertyValue;
 }
 
 export function exhaustiveCheck(check: never, throwError: boolean = false): never {

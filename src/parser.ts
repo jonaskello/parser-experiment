@@ -142,7 +142,7 @@ function valueExpr(state: ParseState): PropertyValueExpr {
   }
 
   const token = eat(TokenTypes.NUMBER, state);
-  return { type: "ValueExpr", value: Number(token.value) };
+  return { type: "ValueExpr", unParsed: "", parsed: { type: "integer", value: Number(token.value) } };
 }
 
 function eat(tokenType: string, state: ParseState): Token {

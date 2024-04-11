@@ -32,4 +32,10 @@ export type ValueRangeExpr = Readonly<{ type: "ValueRangeExpr"; min: PropertyVal
 export type UnaryExpr = Readonly<{ type: "UnaryExpr"; operationType: UnaryExprOperationType; value: PropertyValueExpr }>;
 export type UnaryExprOperationType = "negative";
 export type IdentifierExpr = Readonly<{ type: "IdentifierExpr"; name: string; value: string }>;
-export type ValueExpr = Readonly<{ type: "ValueExpr"; value: number }>;
+export type ValueExpr = Readonly<{ type: "ValueExpr"; unParsed: string; parsed: PropertyValue }>;
+
+// PropertyValue
+export type PropertyValue = AmountPropertyValue | TextPropertyValue | IntegerPropertyValue;
+export type AmountPropertyValue = { readonly type: "amount" };
+export type TextPropertyValue = { readonly type: "text"; readonly value: string };
+export type IntegerPropertyValue = { readonly type: "integer"; readonly value: number };
