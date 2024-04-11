@@ -4,6 +4,7 @@ export type AstNode =
   | AndExpression
   | AddExpr
   | MulExpr
+  | ComparisonExpr
   | UnaryExpression
   | Identifier
   | Numeric
@@ -43,6 +44,13 @@ export type AndExpression = {
   left: AstNode;
   right: AstNode;
 };
+export type ComparisonExpr = {
+  readonly type: "ComparisonExpr";
+  readonly leftValue: AstNode;
+  readonly operationType: ComparisonOperationType;
+  readonly rightValue: AstNode;
+};
+export type ComparisonOperationType = "greater" | "less" | "greaterOrEqual" | "lessOrEqual";
 export type ValueRanges = { type: "ValueRanges"; ranges: Array<AstNode> };
 export type ValueRangeExpr = { type: "ValueRangeExpr"; min: AstNode; max: AstNode };
 export type UnaryExpression = { type: "UnaryExpression"; value: Identifier | Numeric };

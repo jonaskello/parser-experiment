@@ -1,4 +1,15 @@
-import { AddExpr, AstNode, BinaryExpression, ComparisionOperator, Identifier, MathOperator, MulExpr, Numeric, UnaryExpression } from "./ast";
+import {
+  AddExpr,
+  AstNode,
+  BinaryExpression,
+  ComparisionOperator,
+  ComparisonOperationType,
+  Identifier,
+  MathOperator,
+  MulExpr,
+  Numeric,
+  UnaryExpression,
+} from "./ast";
 import { Token, TokenTypes, TokenizeState, getNextToken } from "./tokenizer";
 
 type ParseState = { input: string; lookahead: Token | null; tokenizeState: TokenizeState };
@@ -48,14 +59,12 @@ function comparisonExpr(state: ParseState): AstNode {
   let left = addExpr(state);
 
   // ( (_ (">=" / "<=" / ">" / "<") _ AddExpr)
-  if (
-    state.lookahead?.type === TokenTypes.GREATER_EQUALS ||
-    state.lookahead?.type === TokenTypes.LESS_EQUALS ||
-    state.lookahead?.type === TokenTypes.GREATER ||
-    state.lookahead?.type === TokenTypes.LESS
-  ) {
-    const operator = eat(state.lookahead.type, state).value as ComparisionOperator;
-    left = { type: "BinaryExpression", operator, left, right: addExpr(state) };
+  const op = state.lookahead?.type;
+  if (op === TokenTypes.GREATER_EQUALS || op === TokenTypes.LESS_EQUALS || op === TokenTypes.GREATER || op === TokenTypes.LESS) {
+    const operator = eat(op, state).value as ComparisionOperator;
+    const operationType: ComparisonOperationType =
+      operator === ">=" ? "greaterOrEqual" : operator === "<=" ? "lessOrEqual" : operator === ">" ? "greater" : "less";
+    left = { type: "ComparisonExpr", operationType, leftValue: left, rightValue: addExpr(state) };
     return left;
   }
 
