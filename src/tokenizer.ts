@@ -15,11 +15,13 @@ export const TokenTypes = {
   PARENTHESIS_RIGHT: ")",
 };
 
-const isNumeric = (char: string) => !isNaN(parseInt(char));
-const isLetter = (char: string) => {
-  const code = char.charCodeAt(0);
+const isNumeric = (c: string) => !isNaN(parseInt(c));
+const isLetter = (c: string) => {
+  const code = c.charCodeAt(0);
   return (code >= 65 && code <= 90) || (code >= 97 && code <= 122);
 };
+
+const isWhitespace = (c: string) => c === " ";
 
 export function tokenize(input: string): ReadonlyArray<Token> {
   let cursor = 0;
@@ -87,4 +89,73 @@ export function tokenize(input: string): ReadonlyArray<Token> {
     }
   }
   return tokens;
+}
+
+export function tokenize2(input: string): ReadonlyArray<Token> {
+  const tokens: Array<Token> = [];
+  const state: TokenizeState = { cursor: 0 };
+
+  while (state.cursor < input.length) {
+    console.log("state.cursor", state.cursor);
+    const t = getNextToken(input, state);
+    console.log("t", t);
+    if (t === null) {
+      break;
+    }
+    tokens.push(t);
+  }
+  return tokens;
+}
+
+export type TokenizeState = {
+  cursor: number;
+};
+
+export function getNextToken(
+  input: string,
+  state: TokenizeState
+): Token | null {
+  // Skip whitespace
+  if (isWhitespace(input[state.cursor])) {
+    console.log("whitespace");
+    state.cursor++;
+    while (state.cursor < input.length && isWhitespace(input[state.cursor])) {
+      state.cursor++;
+    }
+  }
+  console.log("state", state);
+
+  if (isNumeric(input[state.cursor])) {
+    let number = input[state.cursor++];
+    while (state.cursor < input.length && isNumeric(input[state.cursor])) {
+      number += input[state.cursor++];
+    }
+    return { type: TokenTypes.NUMBER, value: number };
+  } else if (isLetter(input[state.cursor])) {
+    let identifier = input[state.cursor++];
+    while (state.cursor < input.length && isNumeric(input[state.cursor])) {
+      identifier += input[state.cursor++];
+    }
+    return { type: TokenTypes.IDENTIFIER, value: identifier };
+  } else {
+    const c = input[state.cursor++];
+    switch (c) {
+      case "+":
+        return { type: TokenTypes.ADDITION, value: c };
+      case "-":
+        return { type: TokenTypes.SUBTRACTION, value: c };
+      case "*":
+        return { type: TokenTypes.MULTIPLICATION, value: c };
+      case "/":
+        return { type: TokenTypes.DIVISION, value: c };
+      case "^":
+        return { type: TokenTypes.EXPONENTIATION, value: c };
+      case "(":
+        return { type: TokenTypes.PARENTHESIS_LEFT, value: c };
+      case ")":
+        return { type: TokenTypes.PARENTHESIS_RIGHT, value: c };
+      default:
+        throw new SyntaxError(`Unexpected token: "${c}"`);
+    }
+  }
 }
