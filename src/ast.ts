@@ -8,7 +8,12 @@ export type PropertyValueExpr = IdentifierExpr | ValueExpr | NullExpr | AddExpr 
 
 export type EmptyExpr = Readonly<{ type: "EmptyExpr" }>;
 export type NullExpr = Readonly<{ type: "NullExpr" }>;
-export type EqualsExpr = Readonly<{ type: "EqualsExpr"; leftValue: Expr; operationType: EqualsOperationType; rightValueRanges: ReadonlyArray<Expr> }>;
+export type EqualsExpr = Readonly<{
+  type: "EqualsExpr";
+  leftValue: PropertyValueExpr;
+  operationType: EqualsOperationType;
+  rightValueRanges: ReadonlyArray<Expr>;
+}>;
 export type EqualsOperationType = "equals" | "notEquals";
 export type AddExpr = Readonly<{ type: "AddExpr"; left: Expr; operationType: AddExprOperationType; right: Expr }>;
 export type AddExprOperationType = "add" | "subtract";
