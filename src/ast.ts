@@ -1,4 +1,15 @@
-export type AstNode = OrExpr | AndExpr | AddExpr | MulExpr | ComparisonExpr | UnaryExpr | IdentifierExpr | Numeric | ValueRanges | ValueRangeExpr;
+export type AstNode =
+  | OrExpr
+  | AndExpr
+  | AddExpr
+  | MulExpr
+  | ComparisonExpr
+  | EqualsExpr
+  | UnaryExpr
+  | IdentifierExpr
+  | Numeric
+  | ValueRanges
+  | ValueRangeExpr;
 
 // // All expression
 // export type Expr = BooleanExpr | PropertyValueExpr | ValueRangeExpr;
@@ -16,7 +27,8 @@ export type EqualsExpr = {
   readonly type: "EqualsExpr";
   readonly leftValue: AstNode;
   readonly operationType: EqualsOperationType;
-  readonly rightValueRanges: ReadonlyArray<ValueRangeExpr>;
+  // readonly rightValueRanges: ReadonlyArray<ValueRangeExpr>;
+  readonly rightValueRanges: ReadonlyArray<AstNode>;
 };
 
 export type EqualsOperationType = "equals" | "notEquals";

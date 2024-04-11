@@ -1,4 +1,4 @@
-import { AstNode, ComparisonOperationType, IdentifierExpr, MulExpr, Numeric, UnaryExpr } from "./ast";
+import { AstNode, ComparisonOperationType, EqualsOperationType, IdentifierExpr, MulExpr, Numeric, UnaryExpr } from "./ast";
 import { Token, TokenTypes, TokenizeState, getNextToken } from "./tokenizer";
 
 type ParseState = { input: string; lookahead: Token | null; tokenizeState: TokenizeState };
@@ -57,8 +57,8 @@ function comparisonExpr(state: ParseState): AstNode {
   }
 
   // (_ ("=" / "!=") _ ValueRangeExpr ("," ValueRangeExpr)*) )
-  if (state.lookahead?.type === TokenTypes.EQUALS || state.lookahead?.type === TokenTypes.NOT_EQUALS) {
-    eat(state.lookahead.type, state).value;
+  if (op === TokenTypes.EQUALS || op === TokenTypes.NOT_EQUALS) {
+    eat(op, state).value;
     const valueRanges: Array<AstNode> = [];
     const vr = valueRangeExpr(state);
     valueRanges.push(vr);
@@ -67,7 +67,8 @@ function comparisonExpr(state: ParseState): AstNode {
       const vr = valueRangeExpr(state);
       valueRanges.push(vr);
     }
-    return { type: "ValueRanges", ranges: valueRanges };
+    const operationType: EqualsOperationType = op === "=" ? "equals" : "notEquals";
+    return { type: "EqualsExpr", operationType, leftValue: left, rightValueRanges: valueRanges };
   }
 
   throw new Error("Unexpected");
