@@ -1,4 +1,14 @@
-import { ComparisonOperationType, EqualsOperationType, IdentifierExpr, MulExpr, ValueExpr, UnaryExpr, Expr, BooleanExpr } from "./ast";
+import {
+  ComparisonOperationType,
+  EqualsOperationType,
+  IdentifierExpr,
+  MulExpr,
+  ValueExpr,
+  UnaryExpr,
+  Expr,
+  BooleanExpr,
+  PropertyValueExpr,
+} from "./ast";
 import { Token, TokenTypes, TokenizeState, getNextToken } from "./tokenizer";
 
 type ParseState = { input: string; lookahead: Token | null; tokenizeState: TokenizeState };
@@ -104,7 +114,7 @@ function addExpr(state: ParseState): Expr {
   return left;
 }
 
-function multiplyExpr(state: ParseState): UnaryExpr | MulExpr | IdentifierExpr | ValueExpr {
+function multiplyExpr(state: ParseState): PropertyValueExpr {
   // MultiplyExpr =	( (UnaryExpr _ ("*" / "/") _ MultiplyExpr)  ) / UnaryExpr
   let left = unaryExpr(state);
   const op = state.lookahead?.type;
@@ -116,7 +126,7 @@ function multiplyExpr(state: ParseState): UnaryExpr | MulExpr | IdentifierExpr |
   return left;
 }
 
-function unaryExpr(state: ParseState): UnaryExpr | IdentifierExpr | ValueExpr {
+function unaryExpr(state: ParseState): PropertyValueExpr {
   // UnaryExpr  = ( ("-" ValueExpr) ) / ValueExpr;
   if (state.lookahead?.type === TokenTypes.MINUS) {
     eat(TokenTypes.MINUS, state);
