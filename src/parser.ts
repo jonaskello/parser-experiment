@@ -1,16 +1,9 @@
+import { AstNode, Identifier, Numeric, UnaryExpression } from "./ast";
 import { Token, TokenTypes, TokenizeState, getNextToken } from "./tokenizer";
 
 type ParseState = { input: string; lookahead: Token | null; tokenizeState: TokenizeState };
 
 type RuleFn = (state: ParseState) => AstNode;
-
-type AstNode = BinaryExpression | UnaryExpression | Identifier | Numeric | ValueRanges | ValueRangeExpr;
-type BinaryExpression = { type: "BinaryExpression"; operator: string; left: AstNode; right: AstNode };
-type ValueRanges = { type: "ValueRanges"; ranges: Array<AstNode> };
-type ValueRangeExpr = { type: "ValueRangeExpr"; min: AstNode; max: AstNode };
-type UnaryExpression = { type: "UnaryExpression"; value: Identifier | Numeric };
-type Identifier = { type: "Identifier"; name: string; value: string };
-type Numeric = { type: "Numeric"; value: number };
 
 export function parse(input: string): AstNode {
   const state: ParseState = { tokenizeState: { cursor: 0 }, input, lookahead: null };
