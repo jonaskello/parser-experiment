@@ -1,9 +1,9 @@
-import { AstNode, ComparisonOperationType, EqualsOperationType, IdentifierExpr, MulExpr, ValueExpr, UnaryExpr } from "./ast";
+import { ComparisonOperationType, EqualsOperationType, IdentifierExpr, MulExpr, ValueExpr, UnaryExpr, Expr } from "./ast";
 import { Token, TokenTypes, TokenizeState, getNextToken } from "./tokenizer";
 
 type ParseState = { input: string; lookahead: Token | null; tokenizeState: TokenizeState };
 
-export function parse(input: string): AstNode {
+export function parse(input: string): Expr {
   const state: ParseState = { tokenizeState: { cursor: 0 }, input, lookahead: null };
 
   state.lookahead = getNextToken(input, state.tokenizeState);
@@ -15,7 +15,7 @@ export function parse(input: string): AstNode {
   return orExpr(state);
 }
 
-function orExpr(state: ParseState): AstNode {
+function orExpr(state: ParseState): Expr {
   // OrExpr = AndExpr (_ "|" _ AndExpr)*
   let left = andExpr(state);
   while (state.lookahead !== null && state.lookahead.type === TokenTypes.OR) {
@@ -25,7 +25,7 @@ function orExpr(state: ParseState): AstNode {
   return left;
 }
 
-function andExpr(state: ParseState): AstNode {
+function andExpr(state: ParseState): Expr {
   // AndExpr = Expr (_ "&" _ Expr)*
   let left = expr(state);
   while (state.lookahead !== null && state.lookahead.type === TokenTypes.AND) {
@@ -46,7 +46,7 @@ function expr(state: ParseState) {
   return comparisonExpr(state);
 }
 
-function comparisonExpr(state: ParseState): AstNode {
+function comparisonExpr(state: ParseState): Expr {
   // ComparisonExpr = AddExpr ( (_ (">=" / "<=" / ">" / "<") _ AddExpr) / (_ ("=" / "!=") _ ValueRangeExpr ("," ValueRangeExpr)*) )
 
   let left = addExpr(state);
@@ -63,7 +63,7 @@ function comparisonExpr(state: ParseState): AstNode {
   // (_ ("=" / "!=") _ ValueRangeExpr ("," ValueRangeExpr)*) )
   if (op === TokenTypes.EQUALS || op === TokenTypes.NOT_EQUALS) {
     eat(op, state).value;
-    const valueRanges: Array<AstNode> = [];
+    const valueRanges: Array<Expr> = [];
     const vr = valueRangeExpr(state);
     valueRanges.push(vr);
     while (state.lookahead !== null && (state.lookahead.type as ",") === TokenTypes.COMMA) {
@@ -78,7 +78,7 @@ function comparisonExpr(state: ParseState): AstNode {
   throw new Error("Unexpected");
 }
 
-function valueRangeExpr(state: ParseState): AstNode {
+function valueRangeExpr(state: ParseState): Expr {
   // ValueRangeExpr = AddExpr (_ "~" _ AddExpr)?
   const left = addExpr(state);
   if (state.lookahead?.type === TokenTypes.TILDE) {
@@ -88,7 +88,7 @@ function valueRangeExpr(state: ParseState): AstNode {
   return left;
 }
 
-function addExpr(state: ParseState): AstNode {
+function addExpr(state: ParseState): Expr {
   // AddExpr =	( (MultiplyExpr _ ("+" / "-") _ AddExpr) ) / MultiplyExpr
   let left = multiplyExpr(state);
   const op = state.lookahead?.type;
