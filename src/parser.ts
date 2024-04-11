@@ -12,6 +12,16 @@ export function parse(input: string) {
     input,
     lookahead: null,
   };
+
+  // let t;
+  // while (true) {
+  //   t = getNextToken(input, state.tokenizeState);
+  //   if (t === null) {
+  //     break;
+  //   }
+  //   console.log("t", t);
+  // }
+
   state.lookahead = getNextToken(input, state.tokenizeState);
 
   return Expression(state);

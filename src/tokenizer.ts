@@ -26,16 +26,12 @@ export type TokenizeState = {
   cursor: number;
 };
 
-export function getNextToken(
-  input: string,
-  state: TokenizeState
-): Token | null {
+export function getNextToken(input: string, state: TokenizeState): Token | null {
   if (state.cursor > input.length - 1) {
     return null;
   }
   // Skip whitespace
   if (isWhitespace(input[state.cursor])) {
-    console.log("whitespace");
     state.cursor++;
     while (state.cursor < input.length && isWhitespace(input[state.cursor])) {
       state.cursor++;
@@ -51,7 +47,7 @@ export function getNextToken(
     return { type: TokenTypes.NUMBER, value: number };
   } else if (isLetter(input[state.cursor])) {
     let identifier = input[state.cursor++];
-    while (state.cursor < input.length && isNumeric(input[state.cursor])) {
+    while (state.cursor < input.length && isLetter(input[state.cursor])) {
       identifier += input[state.cursor++];
     }
     return { type: TokenTypes.IDENTIFIER, value: identifier };
