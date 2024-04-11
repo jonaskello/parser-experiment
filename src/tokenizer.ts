@@ -22,22 +22,6 @@ const isLetter = (c: string) => {
 };
 const isWhitespace = (c: string) => c === " ";
 
-export function tokenize2(input: string): ReadonlyArray<Token> {
-  const tokens: Array<Token> = [];
-  const state: TokenizeState = { cursor: 0 };
-
-  while (state.cursor < input.length) {
-    console.log("state.cursor", state.cursor);
-    const t = getNextToken(input, state);
-    console.log("t", t);
-    if (t === null) {
-      break;
-    }
-    tokens.push(t);
-  }
-  return tokens;
-}
-
 export type TokenizeState = {
   cursor: number;
 };
