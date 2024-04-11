@@ -1,31 +1,11 @@
 import { Token, TokenTypes, TokenizeState, getNextToken } from "./tokenizer";
 
-type ParseState = {
-  input: string;
-  lookahead: Token | null;
-  tokenizeState: TokenizeState;
-};
+type ParseState = { input: string; lookahead: Token | null; tokenizeState: TokenizeState };
 
-type BinaryExpression = {
-  type: "BinaryExpression";
-  value: string;
-};
-
-type UnaryExpression = {
-  type: "UnaryExpression";
-  value: Identifier | Number;
-};
-
-type Identifier = {
-  type: "Identifier";
-  name: string;
-  value: string;
-};
-
-type Number = {
-  type: "Number";
-  value: number;
-};
+type BinaryExpression = { type: "BinaryExpression"; value: string };
+type UnaryExpression = { type: "UnaryExpression"; value: Identifier | Number };
+type Identifier = { type: "Identifier"; name: string; value: string };
+type Number = { type: "Number"; value: number };
 
 export function parse(input: string): BinaryExpression {
   const state: ParseState = { tokenizeState: { cursor: 0 }, input, lookahead: null };
@@ -96,7 +76,7 @@ function valueExpr(state: ParseState): Identifier | Number {
   return { type: "Number", value: Number(token.value) };
 }
 
-function binaryExpression(state: ParseState, leftRule, rightRule, operatorType1, operatorType2?) {
+function binaryExpression(state: ParseState, leftRule, rightRule, operatorType1, operatorType2?): BinaryExpression {
   let left = leftRule(state);
 
   while (state.lookahead !== null && (state.lookahead.type === operatorType1 || state.lookahead.type === operatorType2)) {
@@ -107,7 +87,7 @@ function binaryExpression(state: ParseState, leftRule, rightRule, operatorType1,
   return left;
 }
 
-function eat(tokenType: string, state: ParseState) {
+function eat(tokenType: string, state: ParseState): Token {
   const token = state.lookahead;
 
   if (token == null) {
