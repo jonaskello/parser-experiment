@@ -3,26 +3,15 @@ import * as Ast from "./ast";
 
 export type PropertyType = "amount" | "text" | "integer";
 
-export type Amount<TQuantity> = {
-  readonly unit: { readonly quantity: string };
-  readonly value: number;
-  readonly decimalCount: number;
-};
+// export type Amount<TQuantity> = {
+//   readonly unit: { readonly quantity: string };
+//   readonly value: number;
+//   readonly decimalCount: number;
+// };
 
-export interface AmountPropertyValue {
-  readonly type: "amount";
-  readonly value: Amount<unknown>;
-}
-
-export interface TextPropertyValue {
-  readonly type: "text";
-  readonly value: string;
-}
-
-export interface IntegerPropertyValue {
-  readonly type: "integer";
-  readonly value: number;
-}
+export type AmountPropertyValue = { readonly type: "amount" };
+export type TextPropertyValue = { readonly type: "text"; readonly value: string };
+export type IntegerPropertyValue = { readonly type: "integer"; readonly value: number };
 export type PropertyValue = AmountPropertyValue | TextPropertyValue | IntegerPropertyValue;
 
 export type Comparer = (left: PropertyValue, right: PropertyValue) => number;
@@ -303,20 +292,6 @@ export function fromText(textValue: string): PropertyValue {
   return { type: "text", value: textValue } as PropertyValue;
 }
 
-export function fromAmount(amountValue: Amount<unknown>): PropertyValue {
-  if (!amountValue) {
-    throw new Error("null: value");
-  }
-  if (amountValue.unit.quantity === "Discrete") {
-    return {
-      type: "integer",
-      value: amountValue.value,
-    };
-  } else {
-    return { type: "amount", value: amountValue };
-  }
-}
-
 export function exhaustiveCheck(check: never, throwError: boolean = false): never {
   if (throwError) {
     throw new Error(`ERROR! The value ${JSON.stringify(check)} should be of type never.`);
@@ -349,6 +324,20 @@ export function compareIgnoreCase(a: string, b: string): number {
 ///// ---- AMOUNT
 
 /*
+
+export function fromAmount(amountValue: Amount<unknown>): PropertyValue {
+  if (!amountValue) {
+    throw new Error("null: value");
+  }
+  if (amountValue.unit.quantity === "Discrete") {
+    return {
+      type: "integer",
+      value: amountValue.value,
+    };
+  } else {
+    return { type: "amount", value: amountValue };
+  }
+}
 
 export function amountPlus<T1, T2 extends T1>(left: Amount<T1>, right: Amount<T2>): Amount<T1> {
   const mostGranularAmount = getMostGranularAmount(left, right);
