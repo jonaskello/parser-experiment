@@ -2,20 +2,23 @@ import { Token, TokenTypes, TokenizeState, getNextToken } from "./tokenizer";
 
 type ParseState = {
   input: string;
+  lookahead: Token | null;
   tokenizeState: TokenizeState;
 };
 
-let lookahead: Token | null;
-
 export function parse(input: string) {
-  const state: ParseState = { tokenizeState: { cursor: 0 }, input };
-  lookahead = getNextToken(input, state.tokenizeState);
+  const state: ParseState = {
+    tokenizeState: { cursor: 0 },
+    input,
+    lookahead: null,
+  };
+  state.lookahead = getNextToken(input, state.tokenizeState);
 
   return Expression(state);
 }
 
 function eat(tokenType, state: ParseState) {
-  const token = lookahead;
+  const token = state.lookahead;
 
   if (token == null) {
     throw new SyntaxError(`Unexpected end of input, expected "${tokenType}"`);
@@ -27,9 +30,7 @@ function eat(tokenType, state: ParseState) {
     );
   }
 
-  // lookahead = tokens[tokenIndex++];
-  lookahead = getNextToken(state.input, state.tokenizeState);
-  console.log("lookahead", lookahead);
+  state.lookahead = getNextToken(state.input, state.tokenizeState);
 
   return token;
 }
@@ -44,10 +45,11 @@ function BinaryExpression(
   let left = leftRule(state);
 
   while (
-    lookahead &&
-    (lookahead.type === operatorType1 || lookahead.type === operatorType2)
+    state.lookahead &&
+    (state.lookahead.type === operatorType1 ||
+      state.lookahead.type === operatorType2)
   ) {
-    const operator = eat(lookahead.type, state).value;
+    const operator = eat(state.lookahead.type, state).value;
     left = {
       type: "BinaryExpression",
       operator,
@@ -84,15 +86,15 @@ function Factor(state: ParseState) {
 }
 
 function Primary(state: ParseState) {
-  if (lookahead?.type === TokenTypes.PARENTHESIS_LEFT) {
+  if (state.lookahead?.type === TokenTypes.PARENTHESIS_LEFT) {
     return ParenthesizedExpression(state);
   }
 
-  if (lookahead?.type === TokenTypes.SUBTRACTION) {
+  if (state.lookahead?.type === TokenTypes.SUBTRACTION) {
     return UnaryExpression(state);
   }
 
-  if (lookahead?.type === TokenTypes.IDENTIFIER) {
+  if (state.lookahead?.type === TokenTypes.IDENTIFIER) {
     return FunctionExpression(state);
   }
 
