@@ -80,7 +80,13 @@ function valueRangeExpr(state: ParseState): AstNode {
 
 function addExpr(state: ParseState): AstNode {
   // AddExpr =	( (MultiplyExpr _ ("+" / "-") _ AddExpr) ) / MultiplyExpr
-  return binaryExpression(state, multiplyExpr, addExpr, TokenTypes.ADDITION, TokenTypes.SUBTRACTION);
+  let left = multiplyExpr(state);
+  if (state.lookahead?.type === TokenTypes.ADDITION || state.lookahead?.type === TokenTypes.SUBTRACTION) {
+    eat(state.lookahead?.type, state);
+    const right = addExpr(state);
+    return { type: "BinaryExpression", operator: state.lookahead?.type as MathOperator, left, right };
+  }
+  return left;
 }
 
 function multiplyExpr(state: ParseState): AstNode {
