@@ -45,6 +45,7 @@ function comparisonExpr(state: ParseState): AstNode {
 
   let left = addExpr(state);
 
+  // (_ ("=" / "!=") _ ValueRangeExpr ("," ValueRangeExpr)*) ) )
   if (state.lookahead?.type === TokenTypes.EQUALS || state.lookahead?.type === TokenTypes.NOT_EQUALS) {
     while (state.lookahead !== null && (state.lookahead.type === TokenTypes.EQUALS || state.lookahead.type === TokenTypes.NOT_EQUALS)) {
       const operator = eat(state.lookahead.type, state).value;
@@ -53,26 +54,18 @@ function comparisonExpr(state: ParseState): AstNode {
     return left;
   }
 
-  if (
-    state.lookahead?.type === TokenTypes.GREATER ||
-    state.lookahead?.type === TokenTypes.LESS ||
-    state.lookahead?.type === TokenTypes.LESS_EQUALS ||
-    state.lookahead?.type === TokenTypes.LESS_EQUALS
+  // ( (_ (">=" / "<=" / ">" / "<") _ AddExpr)
+  while (
+    state.lookahead !== null &&
+    (state.lookahead.type === TokenTypes.GREATER ||
+      state.lookahead.type === TokenTypes.LESS ||
+      state.lookahead.type === TokenTypes.LESS_EQUALS ||
+      state.lookahead.type === TokenTypes.LESS_EQUALS)
   ) {
-    while (
-      state.lookahead !== null &&
-      (state.lookahead.type === TokenTypes.GREATER ||
-        state.lookahead.type === TokenTypes.LESS ||
-        state.lookahead.type === TokenTypes.LESS_EQUALS ||
-        state.lookahead.type === TokenTypes.LESS_EQUALS)
-    ) {
-      const operator = eat(state.lookahead.type, state).value;
-      left = { type: "BinaryExpression", operator, left, right: valueRangeExpr(state) };
-    }
-    return left;
+    const operator = eat(state.lookahead.type, state).value;
+    left = { type: "BinaryExpression", operator, left, right: addExpr(state) };
   }
-
-  throw new Error("Unexected");
+  return left;
 }
 
 function valueRangeExpr(state: ParseState): AstNode {
