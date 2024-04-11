@@ -6,6 +6,7 @@ export type PropertyType = "amount" | "text" | "integer";
 export type Amount<TQuantity> = {
   readonly unit: { readonly quantity: string };
   readonly value: number;
+  readonly decimalCount: number;
 };
 
 export interface AmountPropertyValue {
@@ -154,9 +155,9 @@ function evaluatePropertyValueExpr(e: Ast.PropertyValueExpr, properties: Propert
         }
       } else if (left.type === "amount" && right.type === "amount") {
         if (e.operationType === "add") {
-          return fromAmount(Amount.plus(left.value, right.value));
+          return fromAmount(amountPlus(left.value, right.value));
         } else {
-          return fromAmount(Amount.minus(left.value, right.value));
+          return fromAmount(amountMinus(left.value, right.value));
         }
       }
       return null;
@@ -175,13 +176,13 @@ function evaluatePropertyValueExpr(e: Ast.PropertyValueExpr, properties: Propert
         }
       } else if (left.type === "amount" && right.type === "integer") {
         if (e.operationType === "multiply") {
-          return fromAmount(Amount.times(left.value, right.value));
+          return fromAmount(amountTimes(left.value, right.value));
         } else {
-          return fromAmount(Amount.divide(left.value, right.value));
+          return fromAmount(amountDivide(left.value, right.value));
         }
       } else if (left.type === "integer" && right.type === "amount") {
         if (e.operationType === "multiply") {
-          return fromAmount(Amount.times(right.value, left.value));
+          return fromAmount(amountTimes(right.value, left.value));
         }
       }
       return null;
@@ -338,4 +339,77 @@ export function compareNumbers(first: number, second: number, firstDecimals: num
 
 export function compareIgnoreCase(a: string, b: string): number {
   return a.toLowerCase().localeCompare(b.toLowerCase());
+}
+
+export function amountPlus<T1, T2 extends T1>(left: Amount<T1>, right: Amount<T2>): Amount<T1> {
+  const mostGranularAmount = getMostGranularAmount(left, right);
+  return _factory<T1>(
+    valueAs(mostGranularAmount.unit, left) + valueAs(mostGranularAmount.unit, right),
+    mostGranularAmount.unit,
+    mostGranularAmount.decimalCount
+  );
+}
+
+export function minus<T1, T2 extends T1>(left: Amount<T1>, right: Amount<T2>): Amount<T1> {
+  const mostGranularAmount = getMostGranularAmount(left, right);
+  return _factory<T1>(
+    valueAs(mostGranularAmount.unit, left) - valueAs(mostGranularAmount.unit, right),
+    mostGranularAmount.unit,
+    mostGranularAmount.decimalCount
+  );
+}
+
+export function amountTimes<T>(left: Amount<T>, right: number | Amount<Unit.Dimensionless>): Amount<T> {
+  if (typeof right === "number") {
+    return _factory<T>(left.value * right, left.unit, left.decimalCount);
+  } else if (right.unit.quantity === "Dimensionless") {
+    return _factory<T>(left.value * valueAs(Unit.One, right), left.unit, left.decimalCount);
+  } else {
+    throw new Error(`Cannot perform '*' operation with value of type '${right}'.`);
+  }
+}
+
+export function amountDivide<T>(left: Amount<T>, right: number | Amount<Unit.Dimensionless>): Amount<T> {
+  if (typeof right === "number") {
+    return _factory<T>(left.value / right, left.unit, left.decimalCount);
+  } else if (right.unit.quantity === "Dimensionless") {
+    return _factory<T>(left.value / valueAs(Unit.One, right), left.unit, left.decimalCount);
+  } else {
+    throw new Error(`Cannot perform '*' operation with value of type '${right}'.`);
+  }
+}
+
+function getMostGranularAmount<T>(left: Amount<T>, right: Amount<T>): Amount<T> {
+  const rightSmallest = create(Math.pow(10, -right.decimalCount), right.unit);
+  const rightSmallestInLeftUnit = valueAs(left.unit, rightSmallest);
+  const leftSmallestInLeftUnit = Math.pow(10, -left.decimalCount);
+  if (leftSmallestInLeftUnit < rightSmallestInLeftUnit) {
+    return left;
+  }
+  return right;
+}
+
+export function valueAs<T1, T2 extends T1>(toUnit: Unit.Unit<T1>, amount: Amount<T2>): number {
+  if (Unit.equals(amount.unit, toUnit)) {
+    return amount.value;
+  }
+  return Unit.convert(amount.value, amount.unit, toUnit);
+}
+
+function _factory<T>(value: number, unit: Unit.Unit<T>, decimalCount: number): Amount<T> {
+  if (typeof value !== "number") {
+    throw new Error("value must be a number.");
+  }
+  if (typeof unit !== "object") {
+    throw new Error("unit must be an object.");
+  }
+  if (decimalCount !== undefined && typeof decimalCount !== "number") {
+    throw new Error("decimalCount must be an undefined or a number.");
+  }
+
+  return {
+    value: value,
+    unit: unit,
+    decimalCount: decimalCount,
+  };
 }
