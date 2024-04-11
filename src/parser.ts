@@ -14,7 +14,7 @@ import { Token, TokenTypes, TokenizeState, getNextToken } from "./tokenizer";
 
 type ParseState = { input: string; lookahead: Token | null; tokenizeState: TokenizeState };
 
-export function parse(input: string): Expr {
+export function parse(input: string): BooleanExpr {
   const state: ParseState = { tokenizeState: { cursor: 0 }, input, lookahead: null };
 
   state.lookahead = getNextToken(input, state.tokenizeState);

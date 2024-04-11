@@ -1,4 +1,4 @@
-import { evalAst } from "./eval-ast";
+import { evaluateAst } from "./eval";
 import { parse } from "./parser";
 import { printAst } from "./print-ast";
 import { TokenizeState, getNextToken } from "./tokenizer";
@@ -15,8 +15,8 @@ function main() {
   console.dir(ast, { depth: null }); // log nested objects
 
   // printAst(ast);
-  // const result = evalAst(ast);
-  // console.log("result", result);
+  const result = evaluateAst(ast, {}, true);
+  console.log("result", result);
 }
 
 function printAllTokens(input: string) {
