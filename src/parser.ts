@@ -6,24 +6,9 @@ type ParseState = {
 };
 
 let lookahead: Token | null;
-// let tokenIndex = 0;
 
 export function parse(input: string) {
-  // const tokens: Array<Token> = [];
   const state: ParseState = { tokenizeState: { cursor: 0 }, input };
-  // while (state.cursor < input.length) {
-  //   console.log("state.cursor", state.cursor);
-  //   const t = getNextToken(input, state);
-  //   console.log("t", t);
-  //   if (t === null) {
-  //     break;
-  //   }
-  //   tokens.push(t);
-  // }
-
-  // console.log("tokens", tokens);
-
-  // lookahead = tokens[tokenIndex++];
   lookahead = getNextToken(input, state.tokenizeState);
 
   return Expression(state);
