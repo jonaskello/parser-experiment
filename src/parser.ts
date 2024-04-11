@@ -40,12 +40,23 @@ function expr(state: ParseState) {
 }
 
 function comparisonExpr(state: ParseState): AstNode {
-  // ComparisonExpr = ( AddExpr ( (_ (">=" / "<=" / ">" / "<") _ AddExpr) / (_ ("=" / "!=") _ ValueRangeExpr ("," ValueRangeExpr)*) ) )
-  // return binaryExpression(state, addExpr, valueRangeExpr, TokenTypes.EQUALS, TokenTypes.GREATER);
+  // ComparisonExpr = AddExpr ( (_ (">=" / "<=" / ">" / "<") _ AddExpr) / (_ ("=" / "!=") _ ValueRangeExpr ("," ValueRangeExpr)*) )
 
   let left = addExpr(state);
 
-  // (_ ("=" / "!=") _ ValueRangeExpr ("," ValueRangeExpr)*) ) )
+  // ( (_ (">=" / "<=" / ">" / "<") _ AddExpr)
+  if (
+    state.lookahead?.type === TokenTypes.GREATER_EQUALS ||
+    state.lookahead?.type === TokenTypes.LESS_EQUALS ||
+    state.lookahead?.type === TokenTypes.GREATER ||
+    state.lookahead?.type === TokenTypes.LESS
+  ) {
+    const operator = eat(state.lookahead.type, state).value;
+    left = { type: "BinaryExpression", operator, left, right: addExpr(state) };
+    return left;
+  }
+
+  // (_ ("=" / "!=") _ ValueRangeExpr ("," ValueRangeExpr)*) )
   if (state.lookahead?.type === TokenTypes.EQUALS || state.lookahead?.type === TokenTypes.NOT_EQUALS) {
     while (state.lookahead !== null && (state.lookahead.type === TokenTypes.EQUALS || state.lookahead.type === TokenTypes.NOT_EQUALS)) {
       const operator = eat(state.lookahead.type, state).value;
@@ -54,18 +65,7 @@ function comparisonExpr(state: ParseState): AstNode {
     return left;
   }
 
-  // ( (_ (">=" / "<=" / ">" / "<") _ AddExpr)
-  while (
-    state.lookahead !== null &&
-    (state.lookahead.type === TokenTypes.GREATER ||
-      state.lookahead.type === TokenTypes.LESS ||
-      state.lookahead.type === TokenTypes.LESS_EQUALS ||
-      state.lookahead.type === TokenTypes.LESS_EQUALS)
-  ) {
-    const operator = eat(state.lookahead.type, state).value;
-    left = { type: "BinaryExpression", operator, left, right: addExpr(state) };
-  }
-  return left;
+  throw new Error("Unexpected");
 }
 
 function valueRangeExpr(state: ParseState): AstNode {

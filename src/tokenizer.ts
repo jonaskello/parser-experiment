@@ -12,14 +12,15 @@ export const TokenTypes = {
   LESS_EQUALS: "<=",
   GREATER: ">",
   LESS: "<",
-  NUMBER: "NUMBER",
-  IDENTIFIER: "IDENTIFIER",
   ADDITION: "+",
   SUBTRACTION: "-",
   MULTIPLICATION: "*",
   DIVISION: "/",
   PARENTHESIS_LEFT: "(",
   PARENTHESIS_RIGHT: ")",
+  COMMA: ",",
+  NUMBER: "NUMBER",
+  IDENTIFIER: "IDENTIFIER",
 };
 
 const isNumeric = (c: string) => !isNaN(parseInt(c));
@@ -100,6 +101,8 @@ export function getNextToken(input: string, state: TokenizeState): Token | null 
         return { type: TokenTypes.PARENTHESIS_LEFT, value: c };
       case ")":
         return { type: TokenTypes.PARENTHESIS_RIGHT, value: c };
+      case ",":
+        return { type: TokenTypes.COMMA, value: c };
       default:
         throw new SyntaxError(`Unexpected token: "${c}"`);
     }
