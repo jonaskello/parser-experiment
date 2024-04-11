@@ -1,14 +1,12 @@
-export type AstNode =
-  | OrExpression
-  | AndExpression
-  | AddExpr
-  | MulExpr
-  | ComparisonExpr
-  | UnaryExpression
-  | Identifier
-  | Numeric
-  | ValueRanges
-  | ValueRangeExpr;
+export type AstNode = OrExpr | AndExpr | AddExpr | MulExpr | ComparisonExpr | UnaryExpr | IdentifierExpr | Numeric | ValueRanges | ValueRangeExpr;
+
+// // All expression
+// export type Expr = BooleanExpr | PropertyValueExpr | ValueRangeExpr;
+
+// // Expressions that result in a boolean
+// export type BooleanExpr = OrExpr | AndExpr | EqualsExpr | ComparisonExpr | EmptyExpr;
+
+// export type PropertyValueExpr = IdentifierExpr | ValueExpr | NullExpr | AddExpr | MulExpr | UnaryExpr;
 
 export type MathOperator = "+" | "-" | "/" | "*";
 export type ComparisionOperator = "=" | ">" | ">=" | "<" | "<=";
@@ -27,13 +25,13 @@ export interface MulExpr {
   readonly right: AstNode;
 }
 export type MulExprOperationType = "multiply" | "divide";
-export type OrExpression = {
-  type: "OrExpression";
+export type OrExpr = {
+  type: "OrExpr";
   left: AstNode;
   right: AstNode;
 };
-export type AndExpression = {
-  type: "AndExpression";
+export type AndExpr = {
+  type: "AndExpr";
   left: AstNode;
   right: AstNode;
 };
@@ -46,8 +44,8 @@ export type ComparisonExpr = {
 export type ComparisonOperationType = "greater" | "less" | "greaterOrEqual" | "lessOrEqual";
 export type ValueRanges = { type: "ValueRanges"; ranges: Array<AstNode> };
 export type ValueRangeExpr = { type: "ValueRangeExpr"; min: AstNode; max: AstNode };
-export type UnaryExpression = { type: "UnaryExpression"; value: Identifier | Numeric };
-export type Identifier = { type: "Identifier"; name: string; value: string };
+export type UnaryExpr = { type: "UnaryExpr"; value: IdentifierExpr | Numeric };
+export type IdentifierExpr = { type: "IdentifierExpr"; name: string; value: string };
 export type Numeric = { type: "Numeric"; value: number };
 
 /*

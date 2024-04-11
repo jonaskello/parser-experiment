@@ -1,4 +1,4 @@
-import { AstNode, ComparisionOperator, ComparisonOperationType, Identifier, MathOperator, MulExpr, Numeric, UnaryExpression } from "./ast";
+import { AstNode, ComparisionOperator, ComparisonOperationType, IdentifierExpr, MathOperator, MulExpr, Numeric, UnaryExpr } from "./ast";
 import { Token, TokenTypes, TokenizeState, getNextToken } from "./tokenizer";
 
 type ParseState = { input: string; lookahead: Token | null; tokenizeState: TokenizeState };
@@ -16,7 +16,7 @@ function orExpr(state: ParseState): AstNode {
   let left = andExpr(state);
   while (state.lookahead !== null && state.lookahead.type === TokenTypes.OR) {
     eat(state.lookahead.type, state).value as MathOperator | ComparisionOperator;
-    left = { type: "OrExpression", left, right: andExpr(state) };
+    left = { type: "OrExpr", left, right: andExpr(state) };
   }
   return left;
 }
@@ -26,7 +26,7 @@ function andExpr(state: ParseState): AstNode {
   let left = expr(state);
   while (state.lookahead !== null && state.lookahead.type === TokenTypes.AND) {
     eat(state.lookahead.type, state).value as MathOperator | ComparisionOperator;
-    left = { type: "AndExpression", left, right: expr(state) };
+    left = { type: "AndExpr", left, right: expr(state) };
   }
   return left;
 }
@@ -95,7 +95,7 @@ function addExpr(state: ParseState): AstNode {
   return left;
 }
 
-function multiplyExpr(state: ParseState): UnaryExpression | MulExpr | Identifier | Numeric {
+function multiplyExpr(state: ParseState): UnaryExpr | MulExpr | IdentifierExpr | Numeric {
   // MultiplyExpr =	( (UnaryExpr _ ("*" / "/") _ MultiplyExpr)  ) / UnaryExpr
   let left = unaryExpr(state);
   const op = state.lookahead?.type;
@@ -107,20 +107,20 @@ function multiplyExpr(state: ParseState): UnaryExpression | MulExpr | Identifier
   return left;
 }
 
-function unaryExpr(state: ParseState): UnaryExpression | Identifier | Numeric {
+function unaryExpr(state: ParseState): UnaryExpr | IdentifierExpr | Numeric {
   // UnaryExpr  = ( ("-" ValueExpr) ) / ValueExpr;
   if (state.lookahead?.type === TokenTypes.MINUS) {
     eat(TokenTypes.MINUS, state);
-    return { type: "UnaryExpression", value: valueExpr(state) };
+    return { type: "UnaryExpr", value: valueExpr(state) };
   }
   return valueExpr(state);
 }
 
-function valueExpr(state: ParseState): Identifier | Numeric {
+function valueExpr(state: ParseState): IdentifierExpr | Numeric {
   // ValueExpr  = "null" / ident (":" ident)? / propval
   if (state.lookahead?.type === TokenTypes.IDENTIFIER) {
     const token = eat(TokenTypes.IDENTIFIER, state);
-    return { type: "Identifier", name: token.value, value: token.value };
+    return { type: "IdentifierExpr", name: token.value, value: token.value };
   }
 
   const token = eat(TokenTypes.NUMBER, state);

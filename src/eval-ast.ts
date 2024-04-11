@@ -1,4 +1,4 @@
-import { AstNode, BinaryExpression, UnaryExpression } from "./ast";
+import { AstNode, BinaryExpression, UnaryExpr } from "./ast";
 
 export function evalAst(node: AstNode): boolean {
   switch (node.type) {
@@ -57,7 +57,7 @@ function evalBinaryExpression(node: BinaryExpression): boolean {
   }
 }
 
-function evalUnaryExpression(node: UnaryExpression): boolean {
+function evalUnaryExpression(node: UnaryExpr): boolean {
   const value = node.value.type === "Numeric" ? node.value.value : 0; // Assuming only Numeric types for unary expressions
   // Custom logic for unary expression evaluation
   // Let's say we consider negative numbers as false and positive numbers as true
