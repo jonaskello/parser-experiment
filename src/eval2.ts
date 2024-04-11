@@ -1,13 +1,6 @@
-// import { Amount } from "uom";
 import * as Ast from "./ast";
 
 export type PropertyType = "amount" | "text" | "integer";
-
-// export type Amount<TQuantity> = {
-//   readonly unit: { readonly quantity: string };
-//   readonly value: number;
-//   readonly decimalCount: number;
-// };
 
 export type AmountPropertyValue = { readonly type: "amount" };
 export type TextPropertyValue = { readonly type: "text"; readonly value: string };
@@ -324,6 +317,13 @@ export function compareIgnoreCase(a: string, b: string): number {
 ///// ---- AMOUNT
 
 /*
+
+// export type Amount<TQuantity> = {
+//   readonly unit: { readonly quantity: string };
+//   readonly value: number;
+//   readonly decimalCount: number;
+// };
+
 
 export function fromAmount(amountValue: Amount<unknown>): PropertyValue {
   if (!amountValue) {
