@@ -31,7 +31,7 @@ function evalBinaryExpression(node: BinaryExpression): boolean {
 
   switch (node.operator) {
     case "&":
-      return leftValue && !rightValue;
+      return leftValue && rightValue;
     case "|":
       return leftValue || rightValue;
     case "+":
