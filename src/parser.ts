@@ -44,12 +44,7 @@ function BinaryExpression(state: ParseState, leftRule, rightRule, operatorType1,
 
   while (state.lookahead !== null && (state.lookahead.type === operatorType1 || state.lookahead.type === operatorType2)) {
     const operator = eat(state.lookahead.type, state).value;
-    left = {
-      type: "BinaryExpression",
-      operator,
-      left,
-      right: rightRule(state),
-    };
+    left = { type: "BinaryExpression", operator, left, right: rightRule(state) };
   }
 
   return left;
@@ -71,10 +66,7 @@ function Primary(state: ParseState) {
   }
 
   const token = eat(TokenTypes.NUMBER, state);
-  return {
-    type: "Number",
-    value: Number(token.value),
-  };
+  return { type: "Number", value: Number(token.value) };
 }
 
 function ParenthesizedExpression(state: ParseState) {
@@ -87,19 +79,12 @@ function ParenthesizedExpression(state: ParseState) {
 
 function UnaryExpression(state: ParseState) {
   eat(TokenTypes.SUBTRACTION, state);
-  return {
-    type: "UnaryExpression",
-    value: Factor(state),
-  };
+  return { type: "UnaryExpression", value: Factor(state) };
 }
 
 function IdentifierExpression(state: ParseState) {
   const token = eat(TokenTypes.IDENTIFIER, state);
-  return {
-    type: "Identifier",
-    name: token.value,
-    value: token.value,
-  };
+  return { type: "Identifier", name: token.value, value: token.value };
 }
 
 function eat(tokenType: string, state: ParseState) {
