@@ -1,20 +1,11 @@
 import * as Ast from "./ast";
 
-// export type PropertyValue = AmountPropertyValue | TextPropertyValue | IntegerPropertyValue;
-// export type AmountPropertyValue = { readonly type: "amount" };
-// export type TextPropertyValue = { readonly type: "text"; readonly value: string };
-// export type IntegerPropertyValue = { readonly type: "integer"; readonly value: number };
-
-export type PropertyType = "amount" | "text" | "integer";
-
 export type Comparer = (left: Ast.PropertyValue, right: Ast.PropertyValue) => number;
 export const defaultComparer: Comparer = (left: Ast.PropertyValue, right: Ast.PropertyValue) => _compare(left, right);
 
-export type PropertyValueSet = Record<string, Ast.PropertyValue>;
-
 export function evaluateAst(
   e: Ast.BooleanExpr,
-  properties: PropertyValueSet,
+  properties: Record<string, Ast.PropertyValue>,
   matchMissingIdentifiers: boolean,
   comparer: Comparer = defaultComparer
 ): boolean {
@@ -101,7 +92,7 @@ export function evaluateAst(
   }
 }
 
-function evaluatePropertyValueExpr(e: Ast.PropertyValueExpr, properties: PropertyValueSet): Ast.PropertyValue | null {
+function evaluatePropertyValueExpr(e: Ast.PropertyValueExpr, properties: Record<string, Ast.PropertyValue>): Ast.PropertyValue | null {
   switch (e.type) {
     case "IdentifierExpr": {
       //   const pv = PropertyValueSet.get(e.name, properties);
@@ -190,7 +181,7 @@ function evaluatePropertyValueExpr(e: Ast.PropertyValueExpr, properties: Propert
   }
 }
 
-function _isMissingIdent(e: Ast.PropertyValueExpr, properties: PropertyValueSet): boolean {
+function _isMissingIdent(e: Ast.PropertyValueExpr, properties: Record<string, Ast.PropertyValue>): boolean {
   // If expression is an missing identifier it should match anything
   if (e.type === "IdentifierExpr") {
     // if (!PropertyValueSet.hasProperty(e.name, properties)) {
